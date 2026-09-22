@@ -9,15 +9,17 @@ import { brand } from "@/lib/afrostate/config";
 
 type RecordItem = { id: string; full_name: string; phone_number: string; email: string | null; created_at: string };
 
-export function AdminDashboard({ initial }: { initial: Awaited<ReturnType<typeof getAdminState>> }) {
+type AdminState = { unlocked: boolean; records: RecordItem[] };
+
+export function AdminDashboard({ initial }: { initial: AdminState }) {
   const unlock = useServerFn(unlockAdmin); const refresh = useServerFn(getAdminState); const lock = useServerFn(lockAdmin);
   const [data, setData] = useState(initial); const [query, setQuery] = useState(""); const [ascending, setAscending] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState("");
   const records = data.unlocked ? data.records : [];
   const filtered = useMemo(() => [...records].filter((r) => `${r.full_name} ${r.phone_number} ${r.email ?? ""}`.toLowerCase().includes(query.toLowerCase())).sort((a,b) => ascending ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at)), [records, query, ascending]);
 
-  async function handleUnlock(event: React.FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); setError(""); const code = String(new FormData(event.currentTarget).get("code") ?? ""); const result = await unlock({ data: { code } }); if (!result.ok) { setError("That access code didn't work."); setBusy(false); return; } setData(await refresh()); setBusy(false); }
-  async function handleRefresh() { setBusy(true); setData(await refresh()); setBusy(false); }
-  async function handleLock() { await lock(); window.location.reload(); }
+  async function handleUnlock(event: React.FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); setError(""); try { const code = String(new FormData(event.currentTarget).get("code") ?? ""); const result = await unlock({ data: { code } }); if (!result.ok) { setError("That access code didn't work."); return; } sessionStorage.setItem("afrostate-admin-token", result.token); const next = await refresh({ data: { token: result.token } }); if (!next.unlocked) { setError("Access was accepted, but the dashboard could not open. Try again."); return; } setData(next); } catch { setError("The dashboard could not open. Please try again."); } finally { setBusy(false); } }
+  async function handleRefresh() { setBusy(true); const token = sessionStorage.getItem("afrostate-admin-token") ?? undefined; setData(await refresh({ data: { token } })); setBusy(false); }
+  async function handleLock() { sessionStorage.removeItem("afrostate-admin-token"); await lock(); window.location.reload(); }
   function exportCsv() { const cell = (value: string) => `"${value.replaceAll('"', '""')}"`; const csv = ["Name,Phone,Email,Date joined", ...filtered.map((r) => [r.full_name,r.phone_number,r.email ?? "",new Date(r.created_at).toISOString()].map(cell).join(","))].join("\n"); const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); const a = document.createElement("a"); a.href=url; a.download=`afrostate-waitlist-${new Date().toISOString().slice(0,10)}.csv`; a.click(); URL.revokeObjectURL(url); }
 
   if (!data.unlocked) return <main className="grid min-h-screen place-items-center bg-secondary p-5"><form onSubmit={handleUnlock} className="w-full max-w-md border-4 border-foreground bg-primary p-8 shadow-[9px_9px_0_var(--foreground)]"><img src={brand.logo} alt="AFROSTATE" className="mb-8 w-40 border-2 border-foreground"/><LockKeyhole className="mb-4 size-10"/><h1 className="font-display text-5xl uppercase">Team access.</h1><p className="mt-3 font-bold">Enter the private access code to view signups.</p><Input name="code" type="password" autoComplete="current-password" required className="mt-7 h-12 rounded-none border-2 border-foreground bg-background" />{error && <p className="mt-3 text-sm font-bold text-destructive">{error}</p>}<Button variant="streetDark" size="lg" disabled={busy} className="mt-5 w-full">{busy ? "CHECKING..." : "ENTER DASHBOARD"}</Button></form></main>;

@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { useSession } from "@tanstack/react-start/server";
+import { getRequestHeader, setCookie, useSession } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const waitlistSchema = z.object({
@@ -15,9 +15,32 @@ const sessionConfig = {
   password: process.env['ADMIN_SESSION_SECRET']!,
   name: "afrostate-admin",
   maxAge: 60 * 60 * 8,
-  cookie: { httpOnly: true, secure: true, sameSite: "lax" as const, path: "/" },
+  cookie: { httpOnly: true, secure: true, sameSite: "none" as const, path: "/", partitioned: true },
 };
 type AdminSession = { unlocked?: boolean };
+
+const adminTokenSchema = z.string().min(32).max(500);
+
+function signAdminToken() {
+  const secret = process.env['ADMIN_SESSION_SECRET']!;
+  const expiresAt = Date.now() + sessionConfig.maxAge * 1000;
+  const payload = String(expiresAt);
+  const signature = createHash("sha256").update(`${payload}:${secret}`).digest("hex");
+  return `${payload}.${signature}`;
+}
+
+function hasValidAdminToken(token?: string) {
+  if (!token) return false;
+  const [payload, signature, ...rest] = token.split(".");
+  if (!payload || !signature || rest.length || !/^\d+$/.test(payload) || Number(payload) <= Date.now()) return false;
+  const secret = process.env['ADMIN_SESSION_SECRET']!;
+  const expected = createHash("sha256").update(`${payload}:${secret}`).digest("hex");
+  return safeMatch(signature, expected);
+}
+
+function requestAdminToken() {
+  return getRequestHeader("x-afrostate-admin-token") ?? undefined;
+}
 
 function normalizeNigerianPhone(input: string) {
   const compact = input.replace(/[\s()-]/g, "");
@@ -35,7 +58,7 @@ function safeMatch(input: string, expected: string) {
 
 async function requireAdmin() {
   const session = await useSession<AdminSession>(sessionConfig);
-  if (!session.data.unlocked) throw redirect({ to: "/admin" });
+  if (!session.data.unlocked && !hasValidAdminToken(requestAdminToken())) throw redirect({ to: "/admin" });
 }
 
 export const joinWaitlist = createServerFn({ method: "POST" })
@@ -61,12 +84,18 @@ export const unlockAdmin = createServerFn({ method: "POST" })
     if (!expected || !safeMatch(data.code, expected)) return { ok: false as const };
     const session = await useSession<AdminSession>(sessionConfig);
     await session.update({ unlocked: true });
-    return { ok: true as const };
+    const token = signAdminToken();
+    setCookie("afrostate-admin-fallback", token, sessionConfig.cookie);
+    return { ok: true as const, token };
   });
 
-export const getAdminState = createServerFn({ method: "GET" }).handler(async () => {
+export const getAdminState = createServerFn({ method: "POST" })
+  .validator((input) => z.object({ token: adminTokenSchema.optional() }).parse(input))
+  .handler(async ({ data }) => {
   const session = await useSession<AdminSession>(sessionConfig);
-  if (!session.data.unlocked) return { unlocked: false as const, records: [] };
+  if (!session.data.unlocked && !hasValidAdminToken(data.token) && !hasValidAdminToken(requestAdminToken())) {
+    return { unlocked: false as const, records: [] };
+  }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
     .from("waiting_list")
@@ -74,7 +103,7 @@ export const getAdminState = createServerFn({ method: "GET" }).handler(async () 
     .order("created_at", { ascending: false });
   if (error) throw new Error("Unable to load the waiting list");
   return { unlocked: true as const, records: data };
-});
+  });
 
 export const lockAdmin = createServerFn({ method: "POST" }).handler(async () => {
   await requireAdmin();

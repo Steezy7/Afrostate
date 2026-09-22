@@ -3,7 +3,7 @@ import { AdminDashboard } from "@/components/afrostate/AdminDashboard";
 import { getAdminState } from "@/lib/afrostate/waitlist.functions";
 
 export const Route = createFileRoute("/admin")({
-  loader: () => getAdminState(),
+  loader: () => getAdminState({ data: {} }),
   head: () => ({ meta: [
     { title: "AFROSTATE / WAITLIST" },
     { name: "description", content: "Private AFROSTATE waitlist dashboard." },
