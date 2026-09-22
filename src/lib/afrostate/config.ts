@@ -21,7 +21,7 @@ export const designs = [
   { id: "001", name: "AFROSTATE 001", image: heroImage, category: "DROP 001", alt: "Model wearing a navy and cream oversized AFROSTATE-inspired streetwear look" },
   { id: "002", name: "AFROSTATE 002", image: detailImage, category: "DROP 001", alt: "Model in a navy streetwear set with cream piping and leopard-print accents" },
   { id: "003", name: "AFROSTATE 003", image: duoImage, category: "DROP 001", alt: "Two models in coordinated cream, black, and navy streetwear looks" },
-];
+] as const;
 
 export const socials = [
   { label: "INSTAGRAM", href: "" },
