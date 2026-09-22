@@ -20,6 +20,7 @@ function Sticker({ children, className = "" }: { children: React.ReactNode; clas
 export function PublicSite() {
   const [modal, setModal] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [dropCursor, setDropCursor] = useState({ x: 0, y: 0, visible: false });
   const heroRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const open = () => setModal(true);
@@ -71,11 +72,12 @@ export function PublicSite() {
       <section id="drop" className="border-y-4 border-foreground bg-foreground px-4 py-20 text-background md:px-8 md:py-28">
         <div className="mx-auto max-w-[1500px]"><div className="mb-10 flex items-end justify-between"><div><p className="font-mono text-sm text-primary">THE FIRST STATE / 001—003</p><h2 className="section-title font-display uppercase">Drop 001</h2></div><ArrowDownRight className="hidden size-20 text-primary md:block"/></div>
           <div className="lookbook-grid">
-            {designs.map((design, index) => <article key={design.id} className={`design-card group relative overflow-hidden border-4 border-background ${index === 0 ? "design-one" : index === 1 ? "design-two" : "design-three"}`}>
+            {designs.map((design, index) => <article key={design.id} onMouseEnter={() => setDropCursor((cursor) => ({ ...cursor, visible: true }))} onMouseLeave={() => setDropCursor((cursor) => ({ ...cursor, visible: false }))} onMouseMove={(event) => setDropCursor({ x: event.clientX, y: event.clientY, visible: true })} className={`design-card group relative overflow-hidden border-4 border-background ${index === 0 ? "design-one" : index === 1 ? "design-two" : "design-three"}`}>
               <img src={design.image} alt={design.alt} width={index === 2 ? 1536 : index === 0 ? 1280 : 1024} height={index === 2 ? 1024 : index === 0 ? 1600 : 1280} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
               <div className="absolute inset-x-0 bottom-0 flex translate-y-1 items-center justify-between bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div><ArrowRight className="size-7"/></div>
             </article>)}
           </div>
+          <div aria-hidden className={`drop-cursor ${dropCursor.visible ? "opacity-100" : "opacity-0"}`} style={{ transform: `translate3d(${dropCursor.x + 16}px,${dropCursor.y + 16}px,0)` }}>VIEW DROP →</div>
         </div>
       </section>
 
