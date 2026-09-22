@@ -91,18 +91,18 @@ export const unlockAdmin = createServerFn({ method: "POST" })
 
 export const getAdminState = createServerFn({ method: "POST" })
   .validator((input) => z.object({ token: adminTokenSchema.optional() }).parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data: requestData }) => {
   const session = await useSession<AdminSession>(sessionConfig);
-  if (!session.data.unlocked && !hasValidAdminToken(data.token) && !hasValidAdminToken(requestAdminToken())) {
+  if (!session.data.unlocked && !hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken())) {
     return { unlocked: false as const, records: [] };
   }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
+  const { data: records, error } = await supabaseAdmin
     .from("waiting_list")
     .select("id, full_name, phone_number, email, created_at")
     .order("created_at", { ascending: false });
   if (error) throw new Error("Unable to load the waiting list");
-  return { unlocked: true as const, records: data };
+  return { unlocked: true as const, records };
   });
 
 export const lockAdmin = createServerFn({ method: "POST" }).handler(async () => {
