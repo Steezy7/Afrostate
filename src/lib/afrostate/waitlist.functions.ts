@@ -39,7 +39,7 @@ async function requireAdmin() {
 }
 
 export const joinWaitlist = createServerFn({ method: "POST" })
-  .inputValidator((input) => waitlistSchema.parse(input))
+  .validator((input) => waitlistSchema.parse(input))
   .handler(async ({ data }) => {
     const phone = normalizeNigerianPhone(data.phoneNumber);
     if (!phone) return { status: "invalid_phone" as const };
@@ -55,7 +55,7 @@ export const joinWaitlist = createServerFn({ method: "POST" })
   });
 
 export const unlockAdmin = createServerFn({ method: "POST" })
-  .inputValidator((input) => adminCodeSchema.parse(input))
+  .validator((input) => adminCodeSchema.parse(input))
   .handler(async ({ data }) => {
     const expected = process.env['AFROSTATE_ADMIN_CODE'];
     if (!expected || !safeMatch(data.code, expected)) return { ok: false as const };
