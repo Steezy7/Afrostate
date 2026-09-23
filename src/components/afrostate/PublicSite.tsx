@@ -26,12 +26,34 @@ export function PublicSite() {
   const [modal, setModal] = useState(false);
   const [menu, setMenu] = useState(false);
   const [dropCursor, setDropCursor] = useState({ x: 0, y: 0, visible: false });
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [liked, setLiked] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Design | null>(null);
+  const [pendingLike, setPendingLike] = useState<{ id: string; name: string } | null>(null);
+  const loadCounts = useServerFn(getDesignLikeCounts);
   const heroRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
-    const open = () => setModal(true);
+    const open = () => { setPendingLike(null); setModal(true); };
     window.addEventListener("open-waitlist", open);
+    void loadCounts().then(setLikeCounts).catch(() => {});
+    try { setLiked(JSON.parse(localStorage.getItem("afrostate-likes") ?? "[]") as string[]); } catch { /* ignore */ }
     return () => window.removeEventListener("open-waitlist", open);
-  }, []);
+  }, [loadCounts]);
+
+  function openLike(design: Design) {
+    setPendingLike({ id: design.id, name: design.name });
+    setModal(true);
+  }
+  function handleJoined(designId: string | null) {
+    void loadCounts().then(setLikeCounts).catch(() => {});
+    if (!designId) return;
+    setLiked((current) => {
+      const next = current.includes(designId) ? current : [...current, designId];
+      localStorage.setItem("afrostate-likes", JSON.stringify(next));
+      return next;
+    });
+  }
   function moveHero(event: React.MouseEvent<HTMLElement>) {
     const el = heroRef.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
