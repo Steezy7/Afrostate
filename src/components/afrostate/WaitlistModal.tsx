@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { joinWaitlist } from "@/lib/afrostate/waitlist.functions";
 
-export function WaitlistModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+export function WaitlistModal({ open, onOpenChange, likedDesign, onJoined }: { open: boolean; onOpenChange: (open: boolean) => void; likedDesign?: { id: string; name: string } | null; onJoined?: (designId: string | null) => void }) {
   const submit = useServerFn(joinWaitlist);
   const [state, setState] = useState<"form" | "success" | "duplicate">("form");
   const [busy, setBusy] = useState(false);
@@ -23,9 +23,13 @@ export function WaitlistModal({ open, onOpenChange }: { open: boolean; onOpenCha
         fullName: String(form.get("fullName") ?? ""),
         phoneNumber: String(form.get("phoneNumber") ?? ""),
         email: String(form.get("email") ?? ""),
+        likedDesignId: likedDesign?.id ?? "",
       }});
       if (result.status === "invalid_phone") setError("Use 08012345678 or +2348012345678.");
-      else setState(result.status === "duplicate" ? "duplicate" : "success");
+      else {
+        setState(result.status === "duplicate" ? "duplicate" : "success");
+        onJoined?.(likedDesign?.id ?? null);
+      }
     } catch {
       setError("Something got in the way. Try again.");
     } finally { setBusy(false); }
