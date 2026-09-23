@@ -100,8 +100,14 @@ export function PublicSite() {
         <div className="mx-auto max-w-[1500px]"><div className="mb-10 flex items-end justify-between"><div><p className="font-mono text-sm text-primary">THE FIRST STATE / 001—003</p><h2 className="section-title font-display uppercase">Drop 001</h2></div><ArrowDownRight className="hidden size-20 text-primary md:block"/></div>
           <div className="lookbook-grid">
             {designs.map((design, index) => <article key={design.id} onMouseEnter={() => setDropCursor((cursor) => ({ ...cursor, visible: true }))} onMouseLeave={() => setDropCursor((cursor) => ({ ...cursor, visible: false }))} onMouseMove={(event) => setDropCursor({ x: event.clientX, y: event.clientY, visible: true })} className={`design-card group relative overflow-hidden border-4 border-background ${index === 0 ? "design-one" : index === 1 ? "design-two" : "design-three"}`}>
+              <button type="button" onClick={() => setSelected(design)} aria-label={`View ${design.name}`} className="absolute inset-0 z-10 block h-full w-full cursor-pointer" />
               <img src={design.image} alt={design.alt} width={index === 2 ? 1536 : index === 0 ? 1280 : 1024} height={index === 2 ? 1024 : index === 0 ? 1600 : 1280} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
-              <div className="absolute inset-x-0 bottom-0 flex translate-y-1 items-center justify-between bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div><ArrowRight className="size-7"/></div>
+              <div className="absolute inset-x-0 bottom-0 z-20 flex translate-y-1 flex-wrap items-center justify-between gap-3 bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div>
+                <div className="flex items-center gap-2">
+                  <Button variant="streetDark" size="sm" className="h-10" onClick={() => openLike(design)} aria-label={`Like ${design.name}`}><Heart className={liked.includes(design.id) ? "fill-current" : ""} /> {liked.includes(design.id) ? "LIKED" : "LIKE"} {likeCounts[design.id] ?? 0}</Button>
+                  <ArrowRight className="size-7"/>
+                </div>
+              </div>
             </article>)}
           </div>
           <div aria-hidden className={`drop-cursor ${dropCursor.visible ? "opacity-100" : "opacity-0"}`} style={{ transform: `translate3d(${dropCursor.x + 16}px,${dropCursor.y + 16}px,0)` }}>VIEW DROP →</div>
