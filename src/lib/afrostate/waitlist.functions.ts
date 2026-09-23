@@ -133,15 +133,29 @@ export const getAdminState = createServerFn({ method: "POST" })
   .handler(async ({ data: requestData }) => {
   const session = await useSession<AdminSession>(sessionConfig);
   if (!session.data.unlocked && !hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken())) {
-    return { unlocked: false as const, records: [] };
+    return { unlocked: false as const, records: [], likeTotals: [] };
   }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: records, error } = await supabaseAdmin
-    .from("waiting_list")
-    .select("id, full_name, phone_number, email, created_at")
-    .order("created_at", { ascending: false });
-  if (error) throw new Error("Unable to load the waiting list");
-  return { unlocked: true as const, records };
+  const [{ data: rows, error }, { data: likes, error: likesError }] = await Promise.all([
+    supabaseAdmin
+      .from("waiting_list")
+      .select("id, full_name, phone_number, email, created_at")
+      .order("created_at", { ascending: false }),
+    supabaseAdmin.from("design_likes").select("design_id, waiting_list_id"),
+  ]);
+  if (error || likesError) throw new Error("Unable to load the waiting list");
+
+  const byPerson = new Map<string, string[]>();
+  const byDesign = new Map<string, number>();
+  for (const like of likes ?? []) {
+    byPerson.set(like.waiting_list_id, [...(byPerson.get(like.waiting_list_id) ?? []), like.design_id]);
+    byDesign.set(like.design_id, (byDesign.get(like.design_id) ?? 0) + 1);
+  }
+  const records = (rows ?? []).map((row) => ({ ...row, likes: (byPerson.get(row.id) ?? []).sort() }));
+  const likeTotals = [...byDesign.entries()]
+    .map(([designId, count]) => ({ designId, count }))
+    .sort((a, b) => b.count - a.count);
+  return { unlocked: true as const, records, likeTotals };
   });
 
 export const lockAdmin = createServerFn({ method: "POST" }).handler(async () => {
