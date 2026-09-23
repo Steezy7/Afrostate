@@ -8,6 +8,7 @@ const waitlistSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your full name").max(100),
   phoneNumber: z.string().trim().max(20),
   email: z.string().trim().email("Enter a valid email").max(255).optional().or(z.literal("")),
+  likedDesignId: z.string().trim().max(32).optional().or(z.literal("")),
 });
 
 const adminCodeSchema = z.object({ code: z.string().min(1).max(200) });
