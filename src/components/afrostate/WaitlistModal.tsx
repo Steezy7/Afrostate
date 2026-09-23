@@ -63,7 +63,7 @@ export function WaitlistModal({ open, onOpenChange, likedDesign, onJoined }: { o
           <div className="flex min-h-[480px] flex-col items-center justify-center p-10 text-center">
             <div className="relative mb-7 grid size-24 place-items-center rotate-6 border-4 border-foreground bg-background shadow-[7px_7px_0_var(--foreground)]"><Check className="size-12" strokeWidth={4}/><Sparkles className="absolute -right-8 -top-6 size-9"/></div>
             <DialogTitle className="font-display text-6xl uppercase leading-none">{state === "duplicate" ? "You're already in." : "You're in."}</DialogTitle>
-            <DialogDescription className="mt-4 text-lg font-bold text-foreground">{state === "duplicate" ? "Your number is already on the list." : "Welcome to AFROSTATE."}</DialogDescription>
+            <DialogDescription className="mt-4 text-lg font-bold text-foreground">{likedDesign ? `${likedDesign.name} liked. ${state === "duplicate" ? "Your number was already on the list." : "Welcome to AFROSTATE."}` : state === "duplicate" ? "Your number is already on the list." : "Welcome to AFROSTATE."}</DialogDescription>
             <Button variant="streetDark" className="mt-8" onClick={() => setOpen(false)}>BACK TO THE STATE</Button>
           </div>
         )}
