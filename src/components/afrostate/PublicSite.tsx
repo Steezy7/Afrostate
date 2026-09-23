@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowDownRight, ArrowRight, Asterisk, Menu, X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowDownRight, ArrowRight, Asterisk, Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { brand, designs, navigation, socials } from "@/lib/afrostate/config";
+import { getDesignLikeCounts } from "@/lib/afrostate/waitlist.functions";
 import { WaitlistModal } from "./WaitlistModal";
+
+type Design = (typeof designs)[number];
 
 function JoinButton({ className = "", dark = false }: { className?: string; dark?: boolean }) {
   return <Button variant={dark ? "streetDark" : "street"} size="lg" className={`group ${className}`} onClick={() => window.dispatchEvent(new Event("open-waitlist"))}>JOIN THE WAITLIST <ArrowRight className="transition-transform group-hover:translate-x-1" /></Button>;
