@@ -47,9 +47,9 @@ export function WaitlistModal({ open, onOpenChange, likedDesign, onJoined }: { o
           <div className="grid gap-0 sm:grid-cols-[100px_1fr]">
             <div className="leopard-strip hidden border-r-4 border-foreground sm:block" />
             <form onSubmit={handleSubmit} className="p-7 sm:p-10">
-              <div className="mb-8 inline-block rotate-[-2deg] border-2 border-foreground bg-background px-3 py-1 text-xs font-black uppercase">Drop 001 / Early Access</div>
+              <div className="mb-8 inline-block rotate-[-2deg] border-2 border-foreground bg-background px-3 py-1 text-xs font-black uppercase">{likedDesign ? `LIKING ${likedDesign.name}` : "Drop 001 / Early Access"}</div>
               <DialogTitle className="font-display text-5xl uppercase leading-[0.85] sm:text-6xl">Get in<br/>early.</DialogTitle>
-              <DialogDescription className="mt-4 max-w-sm text-base font-semibold text-foreground/75">Drop your details. We'll let you know when AFROSTATE goes live.</DialogDescription>
+              <DialogDescription className="mt-4 max-w-sm text-base font-semibold text-foreground/75">{likedDesign ? `Drop your details to like ${likedDesign.name} and get notified when AFROSTATE goes live.` : "Drop your details. We'll let you know when AFROSTATE goes live."}</DialogDescription>
               <div className="mt-8 space-y-5">
                 <div><Label htmlFor="fullName" className="font-black">FULL NAME *</Label><Input id="fullName" name="fullName" required minLength={2} maxLength={100} autoComplete="name" className="mt-2 h-12 rounded-none border-2 border-foreground bg-background font-bold" /></div>
                 <div><Label htmlFor="phoneNumber" className="font-black">PHONE NUMBER *</Label><Input id="phoneNumber" name="phoneNumber" required inputMode="tel" autoComplete="tel" placeholder="08012345678" className="mt-2 h-12 rounded-none border-2 border-foreground bg-background font-bold" /></div>
