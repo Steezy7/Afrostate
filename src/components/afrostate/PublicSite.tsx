@@ -132,6 +132,21 @@ export function PublicSite() {
     </main>
 
     <footer className="bg-secondary px-5 py-16 md:px-10"><div className="mx-auto max-w-[1500px]"><img src={brand.logo} alt="AFROSTATE" className="w-48 border-2 border-foreground md:w-64"/><div className="my-14 flex flex-col items-start justify-between gap-8 border-y-4 border-foreground py-10 md:flex-row md:items-end"><h2 className="font-display text-[clamp(4rem,11vw,10rem)] uppercase leading-[0.78]">See you in<br/>the state.</h2><JoinButton className="shrink-0"/></div><div className="flex flex-col justify-between gap-8 font-black md:flex-row md:items-end"><div className="flex gap-6">{socials.map((social) => <span key={social.label} className="cursor-default border-b-2 border-foreground">{social.label}</span>)}</div><p>© 2026 AFROSTATE</p></div></div></footer>
-    <WaitlistModal open={modal} onOpenChange={setModal}/>
+    <Dialog open={Boolean(selected)} onOpenChange={(next) => !next && setSelected(null)}>
+      <DialogContent className="max-h-[92vh] overflow-y-auto rounded-none border-4 border-foreground bg-background p-0 shadow-[10px_10px_0_var(--foreground)] sm:max-w-3xl">
+        {selected && <div className="grid md:grid-cols-2">
+          <img src={selected.image} alt={selected.alt} className="h-full max-h-[60vh] w-full border-b-4 border-foreground object-cover md:max-h-none md:border-b-0 md:border-r-4" />
+          <div className="p-7 md:p-10">
+            <span className="inline-block rotate-[-2deg] border-2 border-foreground bg-primary px-3 py-1 text-xs font-black uppercase">{selected.category}</span>
+            <DialogTitle className="mt-6 font-display text-5xl uppercase leading-[0.85]">{selected.name}</DialogTitle>
+            <DialogDescription className="mt-4 text-base font-bold text-foreground/75">{selected.alt}</DialogDescription>
+            <p className="mt-6 font-display text-6xl">{likeCounts[selected.id] ?? 0}<span className="ml-3 font-sans text-sm font-black uppercase">likes</span></p>
+            <Button variant="street" size="lg" className="mt-7 w-full" onClick={() => { const design = selected; setSelected(null); openLike(design); }}><Heart className={liked.includes(selected.id) ? "fill-current" : ""} /> {liked.includes(selected.id) ? "LIKED — LIKE AGAIN" : "LIKE THIS DROP"}</Button>
+            <Button variant="streetDark" size="lg" className="mt-3 w-full" onClick={() => { setSelected(null); setPendingLike(null); setModal(true); }}>JOIN THE WAITLIST <ArrowRight /></Button>
+          </div>
+        </div>}
+      </DialogContent>
+    </Dialog>
+    <WaitlistModal open={modal} onOpenChange={(next) => { setModal(next); if (!next) window.setTimeout(() => setPendingLike(null), 250); }} likedDesign={pendingLike} onJoined={handleJoined}/>
   </div>;
 }
