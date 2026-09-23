@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowDownRight, ArrowRight, Asterisk, Menu, X } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowDownRight, ArrowRight, Asterisk, Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { brand, designs, navigation, socials } from "@/lib/afrostate/config";
+import { getDesignLikeCounts } from "@/lib/afrostate/waitlist.functions";
 import { WaitlistModal } from "./WaitlistModal";
+
+type Design = (typeof designs)[number];
 
 function JoinButton({ className = "", dark = false }: { className?: string; dark?: boolean }) {
   return <Button variant={dark ? "streetDark" : "street"} size="lg" className={`group ${className}`} onClick={() => window.dispatchEvent(new Event("open-waitlist"))}>JOIN THE WAITLIST <ArrowRight className="transition-transform group-hover:translate-x-1" /></Button>;
@@ -21,12 +26,34 @@ export function PublicSite() {
   const [modal, setModal] = useState(false);
   const [menu, setMenu] = useState(false);
   const [dropCursor, setDropCursor] = useState({ x: 0, y: 0, visible: false });
+  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
+  const [liked, setLiked] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Design | null>(null);
+  const [pendingLike, setPendingLike] = useState<{ id: string; name: string } | null>(null);
+  const loadCounts = useServerFn(getDesignLikeCounts);
   const heroRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
-    const open = () => setModal(true);
+    const open = () => { setPendingLike(null); setModal(true); };
     window.addEventListener("open-waitlist", open);
+    void loadCounts().then(setLikeCounts).catch(() => {});
+    try { setLiked(JSON.parse(localStorage.getItem("afrostate-likes") ?? "[]") as string[]); } catch { /* ignore */ }
     return () => window.removeEventListener("open-waitlist", open);
-  }, []);
+  }, [loadCounts]);
+
+  function openLike(design: Design) {
+    setPendingLike({ id: design.id, name: design.name });
+    setModal(true);
+  }
+  function handleJoined(designId: string | null) {
+    void loadCounts().then(setLikeCounts).catch(() => {});
+    if (!designId) return;
+    setLiked((current) => {
+      const next = current.includes(designId) ? current : [...current, designId];
+      localStorage.setItem("afrostate-likes", JSON.stringify(next));
+      return next;
+    });
+  }
   function moveHero(event: React.MouseEvent<HTMLElement>) {
     const el = heroRef.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -73,8 +100,14 @@ export function PublicSite() {
         <div className="mx-auto max-w-[1500px]"><div className="mb-10 flex items-end justify-between"><div><p className="font-mono text-sm text-primary">THE FIRST STATE / 001—003</p><h2 className="section-title font-display uppercase">Drop 001</h2></div><ArrowDownRight className="hidden size-20 text-primary md:block"/></div>
           <div className="lookbook-grid">
             {designs.map((design, index) => <article key={design.id} onMouseEnter={() => setDropCursor((cursor) => ({ ...cursor, visible: true }))} onMouseLeave={() => setDropCursor((cursor) => ({ ...cursor, visible: false }))} onMouseMove={(event) => setDropCursor({ x: event.clientX, y: event.clientY, visible: true })} className={`design-card group relative overflow-hidden border-4 border-background ${index === 0 ? "design-one" : index === 1 ? "design-two" : "design-three"}`}>
+              <button type="button" onClick={() => setSelected(design)} aria-label={`View ${design.name}`} className="absolute inset-0 z-10 block h-full w-full cursor-pointer" />
               <img src={design.image} alt={design.alt} width={index === 2 ? 1536 : index === 0 ? 1280 : 1024} height={index === 2 ? 1024 : index === 0 ? 1600 : 1280} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
-              <div className="absolute inset-x-0 bottom-0 flex translate-y-1 items-center justify-between bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div><ArrowRight className="size-7"/></div>
+              <div className="absolute inset-x-0 bottom-0 z-20 flex translate-y-1 flex-wrap items-center justify-between gap-3 bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div>
+                <div className="flex items-center gap-2">
+                  <Button variant="streetDark" size="sm" className="h-10" onClick={() => openLike(design)} aria-label={`Like ${design.name}`}><Heart className={liked.includes(design.id) ? "fill-current" : ""} /> {liked.includes(design.id) ? "LIKED" : "LIKE"} {likeCounts[design.id] ?? 0}</Button>
+                  <ArrowRight className="size-7"/>
+                </div>
+              </div>
             </article>)}
           </div>
           <div aria-hidden className={`drop-cursor ${dropCursor.visible ? "opacity-100" : "opacity-0"}`} style={{ transform: `translate3d(${dropCursor.x + 16}px,${dropCursor.y + 16}px,0)` }}>VIEW DROP →</div>
@@ -99,6 +132,21 @@ export function PublicSite() {
     </main>
 
     <footer className="bg-secondary px-5 py-16 md:px-10"><div className="mx-auto max-w-[1500px]"><img src={brand.logo} alt="AFROSTATE" className="w-48 border-2 border-foreground md:w-64"/><div className="my-14 flex flex-col items-start justify-between gap-8 border-y-4 border-foreground py-10 md:flex-row md:items-end"><h2 className="font-display text-[clamp(4rem,11vw,10rem)] uppercase leading-[0.78]">See you in<br/>the state.</h2><JoinButton className="shrink-0"/></div><div className="flex flex-col justify-between gap-8 font-black md:flex-row md:items-end"><div className="flex gap-6">{socials.map((social) => <span key={social.label} className="cursor-default border-b-2 border-foreground">{social.label}</span>)}</div><p>© 2026 AFROSTATE</p></div></div></footer>
-    <WaitlistModal open={modal} onOpenChange={setModal}/>
+    <Dialog open={Boolean(selected)} onOpenChange={(next) => !next && setSelected(null)}>
+      <DialogContent className="max-h-[92vh] overflow-y-auto rounded-none border-4 border-foreground bg-background p-0 shadow-[10px_10px_0_var(--foreground)] sm:max-w-3xl">
+        {selected && <div className="grid md:grid-cols-2">
+          <img src={selected.image} alt={selected.alt} className="h-full max-h-[60vh] w-full border-b-4 border-foreground object-cover md:max-h-none md:border-b-0 md:border-r-4" />
+          <div className="p-7 md:p-10">
+            <span className="inline-block rotate-[-2deg] border-2 border-foreground bg-primary px-3 py-1 text-xs font-black uppercase">{selected.category}</span>
+            <DialogTitle className="mt-6 font-display text-5xl uppercase leading-[0.85]">{selected.name}</DialogTitle>
+            <DialogDescription className="mt-4 text-base font-bold text-foreground/75">{selected.alt}</DialogDescription>
+            <p className="mt-6 font-display text-6xl">{likeCounts[selected.id] ?? 0}<span className="ml-3 font-sans text-sm font-black uppercase">likes</span></p>
+            <Button variant="street" size="lg" className="mt-7 w-full" onClick={() => { const design = selected; setSelected(null); openLike(design); }}><Heart className={liked.includes(selected.id) ? "fill-current" : ""} /> {liked.includes(selected.id) ? "LIKED — LIKE AGAIN" : "LIKE THIS DROP"}</Button>
+            <Button variant="streetDark" size="lg" className="mt-3 w-full" onClick={() => { setSelected(null); setPendingLike(null); setModal(true); }}>JOIN THE WAITLIST <ArrowRight /></Button>
+          </div>
+        </div>}
+      </DialogContent>
+    </Dialog>
+    <WaitlistModal open={modal} onOpenChange={(next) => { setModal(next); if (!next) window.setTimeout(() => setPendingLike(null), 250); }} likedDesign={pendingLike} onJoined={handleJoined}/>
   </div>;
 }

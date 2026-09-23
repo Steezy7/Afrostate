@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      design_likes: {
+        Row: {
+          created_at: string
+          design_id: string
+          id: string
+          waiting_list_id: string
+        }
+        Insert: {
+          created_at?: string
+          design_id: string
+          id?: string
+          waiting_list_id: string
+        }
+        Update: {
+          created_at?: string
+          design_id?: string
+          id?: string
+          waiting_list_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "design_likes_waiting_list_id_fkey"
+            columns: ["waiting_list_id"]
+            isOneToOne: false
+            referencedRelation: "waiting_list"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       waiting_list: {
         Row: {
           created_at: string
@@ -43,7 +72,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_design_like_counts: {
+        Args: never
+        Returns: {
+          design_id: string
+          like_count: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

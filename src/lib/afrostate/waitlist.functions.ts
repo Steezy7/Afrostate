@@ -8,6 +8,7 @@ const waitlistSchema = z.object({
   fullName: z.string().trim().min(2, "Enter your full name").max(100),
   phoneNumber: z.string().trim().max(20),
   email: z.string().trim().email("Enter a valid email").max(255).optional().or(z.literal("")),
+  likedDesignId: z.string().trim().max(32).optional().or(z.literal("")),
 });
 
 const adminCodeSchema = z.object({ code: z.string().min(1).max(200) });
@@ -67,15 +68,53 @@ export const joinWaitlist = createServerFn({ method: "POST" })
     const phone = normalizeNigerianPhone(data.phoneNumber);
     if (!phone) return { status: "invalid_phone" as const };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("waiting_list").insert({
-      full_name: data.fullName,
-      phone_number: phone,
-      email: data.email || null,
-    });
-    if (error?.code === "23505") return { status: "duplicate" as const };
-    if (error) throw new Error("Unable to join the waitlist right now");
-    return { status: "success" as const };
+    const { data: inserted, error } = await supabaseAdmin
+      .from("waiting_list")
+      .insert({ full_name: data.fullName, phone_number: phone, email: data.email || null })
+      .select("id")
+      .maybeSingle();
+    const duplicate = error?.code === "23505";
+    if (error && !duplicate) throw new Error("Unable to join the waitlist right now");
+
+    let personId = inserted?.id ?? null;
+    if (duplicate) {
+      const { data: existing } = await supabaseAdmin
+        .from("waiting_list")
+        .select("id")
+        .eq("phone_number", phone)
+        .maybeSingle();
+      personId = existing?.id ?? null;
+    }
+    if (personId && data.likedDesignId) {
+      await supabaseAdmin
+        .from("design_likes")
+        .upsert({ design_id: data.likedDesignId, waiting_list_id: personId }, { onConflict: "design_id,waiting_list_id" });
+    }
+    return { status: duplicate ? ("duplicate" as const) : ("success" as const) };
   });
+
+export const getDesignLikeCounts = createServerFn({ method: "GET" }).handler(async () => {
+  const key = process.env['SUPABASE_PUBLISHABLE_KEY']!;
+  const { createClient } = await import("@supabase/supabase-js");
+  const client = createClient(process.env['SUPABASE_URL']!, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    global: {
+      fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+        const headers = new Headers(init?.headers);
+        if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) headers.delete("Authorization");
+        headers.set("apikey", key);
+        return fetch(input, { ...init, headers });
+      },
+    },
+  });
+  const { data, error } = await client.rpc("get_design_like_counts");
+  if (error) return {} as Record<string, number>;
+  const counts: Record<string, number> = {};
+  for (const row of (data ?? []) as { design_id: string; like_count: number }[]) {
+    counts[row.design_id] = Number(row.like_count);
+  }
+  return counts;
+});
 
 export const unlockAdmin = createServerFn({ method: "POST" })
   .validator((input) => adminCodeSchema.parse(input))
@@ -94,15 +133,29 @@ export const getAdminState = createServerFn({ method: "POST" })
   .handler(async ({ data: requestData }) => {
   const session = await useSession<AdminSession>(sessionConfig);
   if (!session.data.unlocked && !hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken())) {
-    return { unlocked: false as const, records: [] };
+    return { unlocked: false as const, records: [], likeTotals: [] };
   }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data: records, error } = await supabaseAdmin
-    .from("waiting_list")
-    .select("id, full_name, phone_number, email, created_at")
-    .order("created_at", { ascending: false });
-  if (error) throw new Error("Unable to load the waiting list");
-  return { unlocked: true as const, records };
+  const [{ data: rows, error }, { data: likes, error: likesError }] = await Promise.all([
+    supabaseAdmin
+      .from("waiting_list")
+      .select("id, full_name, phone_number, email, created_at")
+      .order("created_at", { ascending: false }),
+    supabaseAdmin.from("design_likes").select("design_id, waiting_list_id"),
+  ]);
+  if (error || likesError) throw new Error("Unable to load the waiting list");
+
+  const byPerson = new Map<string, string[]>();
+  const byDesign = new Map<string, number>();
+  for (const like of likes ?? []) {
+    byPerson.set(like.waiting_list_id, [...(byPerson.get(like.waiting_list_id) ?? []), like.design_id]);
+    byDesign.set(like.design_id, (byDesign.get(like.design_id) ?? 0) + 1);
+  }
+  const records = (rows ?? []).map((row) => ({ ...row, likes: (byPerson.get(row.id) ?? []).sort() }));
+  const likeTotals = [...byDesign.entries()]
+    .map(([designId, count]) => ({ designId, count }))
+    .sort((a, b) => b.count - a.count);
+  return { unlocked: true as const, records, likeTotals };
   });
 
 export const lockAdmin = createServerFn({ method: "POST" }).handler(async () => {
