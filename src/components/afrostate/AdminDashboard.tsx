@@ -7,9 +7,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getAdminState, lockAdmin, unlockAdmin } from "@/lib/afrostate/waitlist.functions";
 import { brand } from "@/lib/afrostate/config";
 
-type RecordItem = { id: string; full_name: string; phone_number: string; email: string | null; created_at: string };
+type RecordItem = { id: string; full_name: string; phone_number: string; email: string | null; created_at: string; likes: string[] };
 
-type AdminState = { unlocked: boolean; records: RecordItem[] };
+type AdminState = { unlocked: boolean; records: RecordItem[]; likeTotals: { designId: string; count: number }[] };
 
 export function AdminDashboard({ initial }: { initial: AdminState }) {
   const unlock = useServerFn(unlockAdmin); const refresh = useServerFn(getAdminState); const lock = useServerFn(lockAdmin);
