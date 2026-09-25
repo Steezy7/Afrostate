@@ -32,6 +32,6 @@ export const designs = [
 
 export const socials = [
   { label: "INSTAGRAM", href: "" },
-  { label: "TIKTOK", href: "" },
-  { label: "WHATSAPP", href: "" },
+  { label: "TIKTOK", href: "https://www.tiktok.com/@beama044?_r=1&_t=ZS-9A13bGHdPL0" },
+  { label: "WHATSAPP", href: "https://wa.me/2347013422690" },
 ];
