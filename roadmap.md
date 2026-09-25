@@ -6,3 +6,4 @@
 - [x] Clicking a drop opens a drop detail view
 - [x] Admin: show which designs each person liked + totals per design
 - [x] Expand Drop 001 to ten looks in an asymmetric editorial layout
+- [x] Route every waitlist button to Drop 001 and explain that liking a look joins the list
