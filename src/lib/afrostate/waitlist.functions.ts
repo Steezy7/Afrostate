@@ -68,7 +68,8 @@ async function loadAdminState() {
       .order("created_at", { ascending: false }),
     supabaseAdmin.from("design_likes").select("design_id, waiting_list_id"),
   ]);
-  if (error || likesError) throw new Error("Unable to load the waiting list");
+  if (error) throw new Error(`Waitlist query failed: ${error.message}`);
+  if (likesError) throw new Error(`Likes query failed: ${likesError.message}`);
 
   const byPerson = new Map<string, string[]>();
   const byDesign = new Map<string, number>();
@@ -141,10 +142,14 @@ export const unlockAdmin = createServerFn({ method: "POST" })
   .validator((input) => adminCodeSchema.parse(input))
   .handler(async ({ data }) => {
     const expected = process.env['AFROSTATE_ADMIN_CODE'];
-    if (!expected || !safeMatch(data.code, expected)) return { ok: false as const };
+    if (!expected || !safeMatch(data.code, expected)) return { ok: false as const, reason: "invalid_code" as const };
     const token = signAdminToken();
     setCookie("afrostate-admin-token", token, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 8 });
-    return { ok: true as const, token, state: await loadAdminState() };
+    try {
+      return { ok: true as const, token, state: await loadAdminState() };
+    } catch (error) {
+      return { ok: false as const, reason: error instanceof Error ? error.message : "Unable to load the dashboard data" };
+    }
   });
 
 export const getAdminState = createServerFn({ method: "POST" })
