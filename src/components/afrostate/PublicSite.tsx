@@ -96,7 +96,7 @@ export function PublicSite() {
           <JoinButton className="mt-7 w-fit" />
         </div>
         <div className="hero-photo relative min-h-[48vh] overflow-hidden border-4 border-foreground bg-muted shadow-[9px_9px_0_var(--foreground)] md:min-h-0">
-          <img src={designs[0].image} alt={designs[0].alt} width={1280} height={1600} fetchPriority="high" className="h-full w-full object-cover object-center" />
+          <img src={designs[0].image} alt={designs[0].alt} width={720} height={900} fetchPriority="high" className="h-full w-full object-cover object-center" />
           <span className="absolute bottom-4 right-4 rotate-[-5deg] border-2 border-foreground bg-primary px-4 py-2 font-display text-2xl">001</span>
         </div>
         <img src={brand.logo} alt="" aria-hidden width={640} height={520} className="hero-logo pointer-events-none absolute bottom-1 left-[38%] z-20 hidden w-64 rotate-[-8deg] border-4 border-foreground md:block" />
@@ -119,7 +119,7 @@ export function PublicSite() {
           <div className="lookbook-grid">
             {designs.map((design, index) => <article key={design.id} onMouseEnter={() => setDropCursor((cursor) => ({ ...cursor, visible: true }))} onMouseLeave={() => setDropCursor((cursor) => ({ ...cursor, visible: false }))} onMouseMove={(event) => setDropCursor({ x: event.clientX, y: event.clientY, visible: true })} className={`design-card design-${index + 1} group relative overflow-hidden border-4 border-foreground bg-muted shadow-[7px_7px_0_var(--foreground)]`}>
               <button type="button" onClick={() => setSelected(design)} aria-label={`View ${design.name}`} className="absolute inset-0 z-10 block h-full w-full cursor-pointer" />
-              <img src={design.image} alt={design.alt} width={1280} height={1600} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
+              <img src={design.image} alt={design.alt} width={720} height={900} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
               <span className="design-number absolute left-3 top-3 z-20 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / 010</span>
               <div className="absolute inset-x-0 bottom-0 z-20 flex translate-y-1 flex-wrap items-center justify-between gap-3 bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div>
                 <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ export function PublicSite() {
       </section>
 
       <section className="relative min-h-[88vh] overflow-hidden border-b-4 border-foreground">
-        <img src={designs[2].image} alt={designs[2].alt} width={1536} height={1024} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+        <img src={designs[2].image} alt={designs[2].alt} width={900} height={600} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-foreground/25" />
         <div className="absolute inset-x-0 bottom-0 p-5 text-background md:p-12"><p className="font-mono font-bold">DROP 001</p><p className="font-display text-[clamp(5rem,17vw,15rem)] uppercase leading-[0.72]">Afrostate</p></div>
       </section>
@@ -143,7 +143,7 @@ export function PublicSite() {
       <Marquee small />
 
       <section className="grid border-b-4 border-foreground md:grid-cols-2">
-        <div className="min-h-[520px] overflow-hidden border-b-4 border-foreground md:border-b-0 md:border-r-4"><img src={designs[1].image} alt={designs[1].alt} width={1024} height={1280} loading="lazy" className="h-full w-full object-cover" /></div>
+        <div className="min-h-[520px] overflow-hidden border-b-4 border-foreground md:border-b-0 md:border-r-4"><img src={designs[1].image} alt={designs[1].alt} width={720} height={900} loading="lazy" className="h-full w-full object-cover" /></div>
         <div className="flex flex-col justify-center bg-background p-7 md:p-14 lg:p-20"><Sticker className="mb-8 w-fit rotate-3">MORE THAN A FIT</Sticker><h2 className="section-title font-display uppercase">More than<br/>clothes.</h2><p className="mt-7 max-w-lg text-xl font-bold leading-relaxed">Identity in motion. Culture without a dress code. AFROSTATE is for the loud ideas, the individual choices and the creativity that refuses to sit still.</p></div>
       </section>
 
