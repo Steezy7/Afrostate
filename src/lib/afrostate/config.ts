@@ -1,7 +1,7 @@
-import brandLogo from "/src/assets/afrostate-brand.png";
-import heroImage from "@/assets/afrostate-hero.jpg";
-import duoImage from "@/assets/afrostate-duo.jpg";
-import detailImage from "@/assets/afrostate-detail.jpg";
+import brandLogo from "/src/assets/afrostate-brand-optimized.png";
+import heroImage from "@/assets/afrostate-hero-optimized.jpg";
+import duoImage from "@/assets/afrostate-duo-optimized.jpg";
+import detailImage from "@/assets/afrostate-detail-optimized.jpg";
 
 export const brand = {
   name: "AFROSTATE",

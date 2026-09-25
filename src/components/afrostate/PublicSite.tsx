@@ -78,7 +78,7 @@ export function PublicSite() {
   return <div id="top" className="overflow-hidden bg-background">
     <header className="sticky top-0 z-40 border-b-4 border-foreground bg-background/95 backdrop-blur-sm">
       <nav className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-4 md:px-8" aria-label="Main navigation">
-        <a href="#top" className="block w-16 md:w-20"><img src={brand.logo} alt="AFROSTATE" className="h-auto w-full object-contain" /></a>
+        <a href="#top" className="block w-16 md:w-20"><img src={brand.logo} alt="AFROSTATE" width={640} height={520} className="h-auto w-full object-contain" /></a>
         <div className="hidden items-center gap-9 md:flex">{navigation.map((item) => <a key={item.label} href={item.href} className="story-link text-sm font-black">{item.label}</a>)}</div>
         <JoinButton className="hidden md:inline-flex" />
         <Button variant="ghost" size="icon" className="md:hidden" aria-label={menu ? "Close menu" : "Open menu"} onClick={() => setMenu(!menu)}>{menu ? <X/> : <Menu/>}</Button>
@@ -99,7 +99,7 @@ export function PublicSite() {
           <img src={designs[0].image} alt={designs[0].alt} width={1280} height={1600} fetchPriority="high" className="h-full w-full object-cover object-center" />
           <span className="absolute bottom-4 right-4 rotate-[-5deg] border-2 border-foreground bg-primary px-4 py-2 font-display text-2xl">001</span>
         </div>
-        <img src={brand.logo} alt="" aria-hidden className="hero-logo pointer-events-none absolute bottom-1 left-[38%] z-20 hidden w-64 rotate-[-8deg] border-4 border-foreground md:block" />
+        <img src={brand.logo} alt="" aria-hidden width={640} height={520} className="hero-logo pointer-events-none absolute bottom-1 left-[38%] z-20 hidden w-64 rotate-[-8deg] border-4 border-foreground md:block" />
         <div className="absolute right-4 top-4 z-20 font-mono text-xs font-bold [writing-mode:vertical-rl]">NO FIXED ADDRESS / 2026</div>
       </section>
       <Marquee />
@@ -150,7 +150,7 @@ export function PublicSite() {
       <section className="relative overflow-hidden bg-foreground px-5 py-24 text-background md:px-10 md:py-36"><div className="leopard-block absolute -right-12 -top-16 size-72 rotate-12 border-4 border-background"/><div className="relative mx-auto max-w-6xl"><p className="font-mono text-sm text-primary">EARLY ACCESS / NO QUEUE JUMPING</p><h2 className="section-title mt-4 font-display uppercase">You want in?</h2><p className="mt-4 font-display text-3xl uppercase text-primary md:text-5xl">The first drop is coming.</p><p className="mt-5 text-lg font-bold">Get on the list before everybody else.</p><JoinButton className="mt-9" /></div></section>
     </main>
 
-    <footer className="bg-secondary px-5 py-16 md:px-10"><div className="mx-auto max-w-[1500px]"><img src={brand.logo} alt="AFROSTATE" className="w-48 border-2 border-foreground md:w-64"/><div className="my-14 flex flex-col items-start justify-between gap-8 border-y-4 border-foreground py-10 md:flex-row md:items-end"><h2 className="font-display text-[clamp(4rem,11vw,10rem)] uppercase leading-[0.78]">See you in<br/>the state.</h2><JoinButton className="shrink-0"/></div><div className="flex flex-col justify-between gap-8 font-black md:flex-row md:items-end"><div className="flex gap-6">{socials.map((social) => social.href ? <a key={social.label} href={social.href} target="_blank" rel="noreferrer" className="border-b-2 border-foreground transition-colors hover:text-background hover:border-background">{social.label}</a> : <span key={social.label} className="cursor-default border-b-2 border-foreground">{social.label}</span>)}</div><p>© 2026 AFROSTATE</p></div></div></footer>
+    <footer className="bg-secondary px-5 py-16 md:px-10"><div className="mx-auto max-w-[1500px]"><img src={brand.logo} alt="AFROSTATE" width={640} height={520} className="w-48 border-2 border-foreground md:w-64"/><div className="my-14 flex flex-col items-start justify-between gap-8 border-y-4 border-foreground py-10 md:flex-row md:items-end"><h2 className="font-display text-[clamp(4rem,11vw,10rem)] uppercase leading-[0.78]">See you in<br/>the state.</h2><JoinButton className="shrink-0"/></div><div className="flex flex-col justify-between gap-8 font-black md:flex-row md:items-end"><div className="flex gap-6">{socials.map((social) => social.href ? <a key={social.label} href={social.href} target="_blank" rel="noreferrer" className="border-b-2 border-foreground transition-colors hover:text-background hover:border-background">{social.label}</a> : <span key={social.label} className="cursor-default border-b-2 border-foreground">{social.label}</span>)}</div><p>© 2026 AFROSTATE</p></div></div></footer>
     <Dialog open={Boolean(selected)} onOpenChange={(next) => !next && setSelected(null)}>
       <DialogContent className="max-h-[92vh] overflow-y-auto rounded-none border-4 border-foreground bg-background p-0 shadow-[10px_10px_0_var(--foreground)] sm:max-w-3xl">
         {selected && <div className="grid md:grid-cols-2">
