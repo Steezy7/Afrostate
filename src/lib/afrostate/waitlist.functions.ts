@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeader } from "@tanstack/react-start/server";
+import { getRequestHeader, setCookie } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const waitlistSchema = z.object({
@@ -33,6 +33,12 @@ function hasValidAdminToken(token?: string) {
 
 function requestAdminToken() {
   return getRequestHeader("x-afrostate-admin-token") ?? undefined;
+}
+
+function requestCookieToken() {
+  const cookies = getRequestHeader("cookie") ?? "";
+  const match = cookies.match(/(?:^|;\s*)afrostate-admin-token=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : undefined;
 }
 
 function normalizeNigerianPhone(input: string) {
@@ -113,13 +119,14 @@ export const unlockAdmin = createServerFn({ method: "POST" })
     const expected = process.env['AFROSTATE_ADMIN_CODE'];
     if (!expected || !safeMatch(data.code, expected)) return { ok: false as const };
     const token = signAdminToken();
+    setCookie("afrostate-admin-token", token, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 8 });
     return { ok: true as const, token };
   });
 
 export const getAdminState = createServerFn({ method: "POST" })
   .validator((input) => z.object({ token: adminTokenSchema.optional() }).parse(input))
   .handler(async ({ data: requestData }) => {
-  if (!hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken())) {
+  if (!hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken()) && !hasValidAdminToken(requestCookieToken())) {
     return { unlocked: false as const, records: [], likeTotals: [] };
   }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -148,6 +155,7 @@ export const getAdminState = createServerFn({ method: "POST" })
 export const lockAdmin = createServerFn({ method: "POST" })
   .validator((input) => z.object({ token: adminTokenSchema.optional() }).parse(input))
   .handler(async ({ data }) => {
-  requireAdmin(data.token);
+  requireAdmin(data.token ?? requestCookieToken());
+  setCookie("afrostate-admin-token", "", { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 0 });
   return { ok: true as const };
 });
