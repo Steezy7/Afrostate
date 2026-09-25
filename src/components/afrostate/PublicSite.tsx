@@ -10,7 +10,7 @@ import { WaitlistModal } from "./WaitlistModal";
 type Design = (typeof designs)[number];
 
 function JoinButton({ className = "", dark = false }: { className?: string; dark?: boolean }) {
-  return <Button variant={dark ? "streetDark" : "street"} size="lg" className={`group ${className}`} onClick={() => window.dispatchEvent(new Event("open-waitlist"))}>JOIN THE WAITLIST <ArrowRight className="transition-transform group-hover:translate-x-1" /></Button>;
+  return <Button variant={dark ? "streetDark" : "street"} size="lg" className={`group ${className}`} onClick={() => window.dispatchEvent(new Event("open-drop-picker"))}>JOIN THE WAITLIST <ArrowRight className="transition-transform group-hover:translate-x-1" /></Button>;
 }
 
 function Marquee({ small = false }: { small?: boolean }) {
@@ -30,15 +30,29 @@ export function PublicSite() {
   const [liked, setLiked] = useState<string[]>([]);
   const [selected, setSelected] = useState<Design | null>(null);
   const [pendingLike, setPendingLike] = useState<{ id: string; name: string } | null>(null);
+  const [showDropPrompt, setShowDropPrompt] = useState(false);
   const loadCounts = useServerFn(getDesignLikeCounts);
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const open = () => { setPendingLike(null); setModal(true); };
-    window.addEventListener("open-waitlist", open);
+    let promptTimer: number | undefined;
+    const openDropPicker = () => {
+      setMenu(false);
+      setSelected(null);
+      setModal(false);
+      setShowDropPrompt(true);
+      window.history.replaceState(null, "", "#drop");
+      document.getElementById("drop")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+      if (promptTimer) window.clearTimeout(promptTimer);
+      promptTimer = window.setTimeout(() => setShowDropPrompt(false), 6500);
+    };
+    window.addEventListener("open-drop-picker", openDropPicker);
     void loadCounts().then(setLikeCounts).catch(() => {});
     try { setLiked(JSON.parse(localStorage.getItem("afrostate-likes") ?? "[]") as string[]); } catch { /* ignore */ }
-    return () => window.removeEventListener("open-waitlist", open);
+    return () => {
+      window.removeEventListener("open-drop-picker", openDropPicker);
+      if (promptTimer) window.clearTimeout(promptTimer);
+    };
   }, [loadCounts]);
 
   function openLike(design: Design) {
@@ -97,7 +111,11 @@ export function PublicSite() {
       </section>
 
       <section id="drop" className="border-y-4 border-foreground bg-background px-4 py-20 text-foreground md:px-8 md:py-28">
-        <div className="mx-auto max-w-[1500px]"><div className="mb-16 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-5 md:mb-24"><div className="min-w-0"><p className="font-mono text-sm font-bold">THE FIRST STATE / 001—010</p><h2 className="section-title font-display uppercase">Drop 001</h2></div><div className="flex shrink-0 flex-col items-end gap-3"><ArrowDownRight className="hidden size-20 text-primary md:block"/><Sticker className="hidden rotate-2 md:inline-block">10 LOOKS / ONE STATE</Sticker></div></div>
+        <div className="mx-auto max-w-[1500px]"><div className="mb-8 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-5"><div className="min-w-0"><p className="font-mono text-sm font-bold">THE FIRST STATE / 001—010</p><h2 className="section-title font-display uppercase">Drop 001</h2></div><div className="flex shrink-0 flex-col items-end gap-3"><ArrowDownRight className="hidden size-20 text-primary md:block"/><Sticker className="hidden rotate-2 md:inline-block">10 LOOKS / ONE STATE</Sticker></div></div>
+          <div className={`drop-instruction mb-16 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4 border-4 border-foreground bg-primary p-4 shadow-[6px_6px_0_var(--foreground)] transition-transform md:mb-24 md:w-fit md:px-6 ${showDropPrompt ? "drop-instruction-active" : ""}`} role="status" aria-live="polite">
+            <Heart className="size-8 shrink-0 fill-current" />
+            <p className="font-display text-xl uppercase leading-tight md:text-3xl">Pick a look and tap like to join the waitlist.</p>
+          </div>
           <div className="lookbook-grid">
             {designs.map((design, index) => <article key={design.id} onMouseEnter={() => setDropCursor((cursor) => ({ ...cursor, visible: true }))} onMouseLeave={() => setDropCursor((cursor) => ({ ...cursor, visible: false }))} onMouseMove={(event) => setDropCursor({ x: event.clientX, y: event.clientY, visible: true })} className={`design-card design-${index + 1} group relative overflow-hidden border-4 border-foreground bg-muted shadow-[7px_7px_0_var(--foreground)]`}>
               <button type="button" onClick={() => setSelected(design)} aria-label={`View ${design.name}`} className="absolute inset-0 z-10 block h-full w-full cursor-pointer" />
@@ -143,7 +161,7 @@ export function PublicSite() {
             <DialogDescription className="mt-4 text-base font-bold text-foreground/75">{selected.alt}</DialogDescription>
             <p className="mt-6 font-display text-6xl">{likeCounts[selected.id] ?? 0}<span className="ml-3 font-sans text-sm font-black uppercase">likes</span></p>
             <Button variant="street" size="lg" className="mt-7 w-full" onClick={() => { const design = selected; setSelected(null); openLike(design); }}><Heart className={liked.includes(selected.id) ? "fill-current" : ""} /> {liked.includes(selected.id) ? "LIKED — LIKE AGAIN" : "LIKE THIS DROP"}</Button>
-            <Button variant="streetDark" size="lg" className="mt-3 w-full" onClick={() => { setSelected(null); setPendingLike(null); setModal(true); }}>JOIN THE WAITLIST <ArrowRight /></Button>
+            <Button variant="streetDark" size="lg" className="mt-3 w-full" onClick={() => window.dispatchEvent(new Event("open-drop-picker"))}>JOIN THE WAITLIST <ArrowRight /></Button>
           </div>
         </div>}
       </DialogContent>
