@@ -8,9 +8,9 @@ export const Route = createFileRoute("/")({
     { property: "og:title", content: "AFROSTATE — The State Is Coming" },
     { property: "og:description", content: "Fashion is a state of mind. Click the link to join the state." },
     { property: "og:type", content: "website" },
-    { property: "og:image", content: "/favicon.png" },
+    { property: "og:image", content: "https://afrostate.vercel.app/favicon.png" },
     { name: "twitter:card", content: "summary_large_image" },
-    { name: "twitter:image", content: "/favicon.png" },
+    { name: "twitter:image", content: "https://afrostate.vercel.app/favicon.png" },
   ]}),
   component: PublicSite,
 });

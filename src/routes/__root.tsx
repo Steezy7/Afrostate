@@ -84,13 +84,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:title", content: "AFROSTATE — The State Is Coming" },
       { property: "og:description", content: "Fashion is a state of mind. Click the link to join the state." },
-      { property: "og:image", content: "/favicon.png" },
+      { property: "og:image", content: "https://afrostate.vercel.app/favicon.png" },
       { property: "og:image:alt", content: "AFROSTATE — The State Is Coming" },
       { property: "og:url", content: "https://afrostate.com" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "AFROSTATE — The State Is Coming" },
       { name: "twitter:description", content: "Fashion is a state of mind. Click the link to join the state." },
-      { name: "twitter:image", content: "/favicon.png" },
+      { name: "twitter:image", content: "https://afrostate.vercel.app/favicon.png" },
     ],
     links: [
       {
