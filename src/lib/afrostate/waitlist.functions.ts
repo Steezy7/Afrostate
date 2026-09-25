@@ -1,7 +1,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { getRequestHeader, setCookie, useSession } from "@tanstack/react-start/server";
+import { getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const waitlistSchema = z.object({
@@ -12,14 +12,6 @@ const waitlistSchema = z.object({
 });
 
 const adminCodeSchema = z.object({ code: z.string().min(1).max(200) });
-const sessionConfig = {
-  password: process.env['ADMIN_SESSION_SECRET']!,
-  name: "afrostate-admin",
-  maxAge: 60 * 60 * 8,
-  cookie: { httpOnly: true, secure: true, sameSite: "none" as const, path: "/", partitioned: true },
-};
-type AdminSession = { unlocked?: boolean };
-
 const adminTokenSchema = z.string().min(32).max(500);
 
 function signAdminToken() {
@@ -57,9 +49,8 @@ function safeMatch(input: string, expected: string) {
   return timingSafeEqual(left, right);
 }
 
-async function requireAdmin() {
-  const session = await useSession<AdminSession>(sessionConfig);
-  if (!session.data.unlocked && !hasValidAdminToken(requestAdminToken())) throw redirect({ to: "/admin" });
+function requireAdmin(token?: string) {
+  if (!hasValidAdminToken(token ?? requestAdminToken())) throw redirect({ to: "/admin" });
 }
 
 export const joinWaitlist = createServerFn({ method: "POST" })
@@ -121,18 +112,14 @@ export const unlockAdmin = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const expected = process.env['AFROSTATE_ADMIN_CODE'];
     if (!expected || !safeMatch(data.code, expected)) return { ok: false as const };
-    const session = await useSession<AdminSession>(sessionConfig);
-    await session.update({ unlocked: true });
     const token = signAdminToken();
-    setCookie("afrostate-admin-fallback", token, sessionConfig.cookie);
     return { ok: true as const, token };
   });
 
 export const getAdminState = createServerFn({ method: "POST" })
   .validator((input) => z.object({ token: adminTokenSchema.optional() }).parse(input))
   .handler(async ({ data: requestData }) => {
-  const session = await useSession<AdminSession>(sessionConfig);
-  if (!session.data.unlocked && !hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken())) {
+  if (!hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken())) {
     return { unlocked: false as const, records: [], likeTotals: [] };
   }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -158,9 +145,9 @@ export const getAdminState = createServerFn({ method: "POST" })
   return { unlocked: true as const, records, likeTotals };
   });
 
-export const lockAdmin = createServerFn({ method: "POST" }).handler(async () => {
-  await requireAdmin();
-  const session = await useSession<AdminSession>(sessionConfig);
-  await session.clear();
+export const lockAdmin = createServerFn({ method: "POST" })
+  .validator((input) => z.object({ token: adminTokenSchema.optional() }).parse(input))
+  .handler(async ({ data }) => {
+  requireAdmin(data.token);
   return { ok: true as const };
 });
