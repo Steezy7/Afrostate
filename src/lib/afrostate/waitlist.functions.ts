@@ -59,6 +59,30 @@ function requireAdmin(token?: string) {
   if (!hasValidAdminToken(token ?? requestAdminToken())) throw redirect({ to: "/admin" });
 }
 
+async function loadAdminState() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const [{ data: rows, error }, { data: likes, error: likesError }] = await Promise.all([
+    supabaseAdmin
+      .from("waiting_list")
+      .select("id, full_name, phone_number, email, created_at")
+      .order("created_at", { ascending: false }),
+    supabaseAdmin.from("design_likes").select("design_id, waiting_list_id"),
+  ]);
+  if (error || likesError) throw new Error("Unable to load the waiting list");
+
+  const byPerson = new Map<string, string[]>();
+  const byDesign = new Map<string, number>();
+  for (const like of likes ?? []) {
+    byPerson.set(like.waiting_list_id, [...(byPerson.get(like.waiting_list_id) ?? []), like.design_id]);
+    byDesign.set(like.design_id, (byDesign.get(like.design_id) ?? 0) + 1);
+  }
+  const records = (rows ?? []).map((row) => ({ ...row, likes: (byPerson.get(row.id) ?? []).sort() }));
+  const likeTotals = [...byDesign.entries()]
+    .map(([designId, count]) => ({ designId, count }))
+    .sort((a, b) => b.count - a.count);
+  return { unlocked: true as const, records, likeTotals };
+}
+
 export const joinWaitlist = createServerFn({ method: "POST" })
   .validator((input) => waitlistSchema.parse(input))
   .handler(async ({ data }) => {
@@ -120,7 +144,7 @@ export const unlockAdmin = createServerFn({ method: "POST" })
     if (!expected || !safeMatch(data.code, expected)) return { ok: false as const };
     const token = signAdminToken();
     setCookie("afrostate-admin-token", token, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 8 });
-    return { ok: true as const, token };
+    return { ok: true as const, token, state: await loadAdminState() };
   });
 
 export const getAdminState = createServerFn({ method: "POST" })
@@ -129,27 +153,7 @@ export const getAdminState = createServerFn({ method: "POST" })
   if (!hasValidAdminToken(requestData.token) && !hasValidAdminToken(requestAdminToken()) && !hasValidAdminToken(requestCookieToken())) {
     return { unlocked: false as const, records: [], likeTotals: [] };
   }
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const [{ data: rows, error }, { data: likes, error: likesError }] = await Promise.all([
-    supabaseAdmin
-      .from("waiting_list")
-      .select("id, full_name, phone_number, email, created_at")
-      .order("created_at", { ascending: false }),
-    supabaseAdmin.from("design_likes").select("design_id, waiting_list_id"),
-  ]);
-  if (error || likesError) throw new Error("Unable to load the waiting list");
-
-  const byPerson = new Map<string, string[]>();
-  const byDesign = new Map<string, number>();
-  for (const like of likes ?? []) {
-    byPerson.set(like.waiting_list_id, [...(byPerson.get(like.waiting_list_id) ?? []), like.design_id]);
-    byDesign.set(like.design_id, (byDesign.get(like.design_id) ?? 0) + 1);
-  }
-  const records = (rows ?? []).map((row) => ({ ...row, likes: (byPerson.get(row.id) ?? []).sort() }));
-  const likeTotals = [...byDesign.entries()]
-    .map(([designId, count]) => ({ designId, count }))
-    .sort((a, b) => b.count - a.count);
-  return { unlocked: true as const, records, likeTotals };
+  return loadAdminState();
   });
 
 export const lockAdmin = createServerFn({ method: "POST" })
