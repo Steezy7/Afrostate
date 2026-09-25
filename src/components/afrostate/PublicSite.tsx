@@ -78,7 +78,7 @@ export function PublicSite() {
   return <div id="top" className="overflow-hidden bg-background">
     <header className="sticky top-0 z-40 border-b-4 border-foreground bg-background/95 backdrop-blur-sm">
       <nav className="mx-auto flex h-20 max-w-[1600px] items-center justify-between px-4 md:px-8" aria-label="Main navigation">
-        <a href="#top" className="block w-28 md:w-36"><img src={brand.logo} alt="AFROSTATE" className="w-full" /></a>
+        <a href="#top" className="block w-16 md:w-20"><img src={brand.logo} alt="AFROSTATE" className="h-auto w-full object-contain" /></a>
         <div className="hidden items-center gap-9 md:flex">{navigation.map((item) => <a key={item.label} href={item.href} className="story-link text-sm font-black">{item.label}</a>)}</div>
         <JoinButton className="hidden md:inline-flex" />
         <Button variant="ghost" size="icon" className="md:hidden" aria-label={menu ? "Close menu" : "Open menu"} onClick={() => setMenu(!menu)}>{menu ? <X/> : <Menu/>}</Button>

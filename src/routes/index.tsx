@@ -4,11 +4,13 @@ import { PublicSite } from "@/components/afrostate/PublicSite";
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "AFROSTATE — The State Is Coming" },
-    { name: "description", content: "AFROSTATE is a contemporary streetwear brand built around culture, identity, creativity and the energy of a new generation. Join the waiting list for Drop 001." },
+    { name: "description", content: "Fashion is a state of mind. Click the link to join the state." },
     { property: "og:title", content: "AFROSTATE — The State Is Coming" },
-    { property: "og:description", content: "AFROSTATE is a contemporary streetwear brand built around culture, identity, creativity and the energy of a new generation. Join the waiting list for Drop 001." },
+    { property: "og:description", content: "Fashion is a state of mind. Click the link to join the state." },
     { property: "og:type", content: "website" },
+    { property: "og:image", content: "/favicon.png" },
     { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:image", content: "/favicon.png" },
   ]}),
   component: PublicSite,
 });

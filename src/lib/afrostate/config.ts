@@ -1,11 +1,11 @@
-import logo from "@/assets/afrostate-logo.png.asset.json";
+import brandLogo from "/src/assets/afrostate-brand.png";
 import heroImage from "@/assets/afrostate-hero.jpg";
 import duoImage from "@/assets/afrostate-duo.jpg";
 import detailImage from "@/assets/afrostate-detail.jpg";
 
 export const brand = {
   name: "AFROSTATE",
-  logo: logo.url,
+  logo: brandLogo,
   tagline: "AFRICAN ENERGY. STREET CULTURE. NO RULES.",
   intro:
     "AFROSTATE is a streetwear project built around identity, creativity, movement and the energy of a generation creating its own rules.",

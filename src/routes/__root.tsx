@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportAppError } from "../lib/error-reporting";
 
 function NotFoundComponent() {
   return (
@@ -38,7 +38,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportAppError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -77,11 +77,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AFROSTATE" },
-      { name: "description", content: "AFROSTATE streetwear." },
+      { title: "AFROSTATE — The State Is Coming" },
+      { name: "description", content: "Fashion is a state of mind. Click the link to join the state." },
       { name: "author", content: "AFROSTATE" },
+      { name: "theme-color", content: "#0b0b0b" },
       { property: "og:type", content: "website" },
+      { property: "og:title", content: "AFROSTATE — The State Is Coming" },
+      { property: "og:description", content: "Fashion is a state of mind. Click the link to join the state." },
+      { property: "og:image", content: "/favicon.png" },
+      { property: "og:image:alt", content: "AFROSTATE — The State Is Coming" },
+      { property: "og:url", content: "https://afrostate.com" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "AFROSTATE — The State Is Coming" },
+      { name: "twitter:description", content: "Fashion is a state of mind. Click the link to join the state." },
+      { name: "twitter:image", content: "/favicon.png" },
     ],
     links: [
       {
@@ -89,6 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;600;700;900&family=Permanent+Marker&display=swap" },
