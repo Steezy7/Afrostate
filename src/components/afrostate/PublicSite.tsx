@@ -35,7 +35,7 @@ export function PublicSite() {
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    let promptTimer: ReturnType<typeof setTimeout> | undefined;
+    let promptTimer: number | undefined;
     const openDropPicker = () => {
       setMenu(false);
       setSelected(null);
