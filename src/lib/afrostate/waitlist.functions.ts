@@ -13,10 +13,11 @@ const waitlistSchema = z.object({
 
 const adminCodeSchema = z.object({ code: z.string().min(1).max(200) });
 const adminTokenSchema = z.string().min(32).max(500);
+const adminTokenMaxAge = 60 * 60 * 8;
 
 function signAdminToken() {
   const secret = process.env['ADMIN_SESSION_SECRET']!;
-  const expiresAt = Date.now() + sessionConfig.maxAge * 1000;
+  const expiresAt = Date.now() + adminTokenMaxAge * 1000;
   const payload = String(expiresAt);
   const signature = createHash("sha256").update(`${payload}:${secret}`).digest("hex");
   return `${payload}.${signature}`;
