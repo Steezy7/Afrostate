@@ -139,7 +139,7 @@ export function PublicSite() {
         <div className="absolute inset-x-0 bottom-0 p-5 text-background md:p-12"><p className="font-mono font-bold">DROP 001</p><p className="font-display text-[clamp(5rem,17vw,15rem)] uppercase leading-[0.72]">Afrostate</p></div>
       </section>
 
-      <section className="where-section grid min-h-[70vh] place-items-center border-b-4 border-foreground bg-primary px-5 py-20 text-center"><div><p className="mb-5 font-mono text-sm font-bold">YOU FOUND US.</p><h2 className="section-title font-display uppercase">Where are<br/>we going?</h2><p className="mt-3 font-display text-[clamp(4rem,14vw,11rem)] uppercase leading-none text-background [text-shadow:4px_4px_0_var(--foreground)]">Everywhere.</p><div className="mt-8 flex justify-center gap-3 text-4xl"><span>↗</span><span>→</span><span>↘</span></div></div></section>
+      <section className="where-section grid min-h-[70vh] place-items-center border-b-4 border-foreground bg-primary px-5 py-20 text-center"><div><p className="mb-5 font-mono text-sm font-bold">YOU FOUND US.</p><h2 className="section-title font-display uppercase">Where are<br/>we going?</h2><p className="mt-3 font-display text-[clamp(4rem,14vw,11rem)] uppercase leading-none text-background [text-shadow:4px_4px_0_var(--foreground)]">Everywhere.</p></div></section>
       <Marquee small />
 
       <section className="grid border-b-4 border-foreground md:grid-cols-2">
