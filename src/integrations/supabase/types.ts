@@ -16,18 +16,21 @@ export type Database = {
     Tables: {
       design_likes: {
         Row: {
+          color: string
           created_at: string
           design_id: string
           id: string
           waiting_list_id: string
         }
         Insert: {
+          color?: string
           created_at?: string
           design_id: string
           id?: string
           waiting_list_id: string
         }
         Update: {
+          color?: string
           created_at?: string
           design_id?: string
           id?: string

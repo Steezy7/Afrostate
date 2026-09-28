@@ -27,7 +27,7 @@ export function PublicSite() {
   const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
   const [liked, setLiked] = useState<string[]>([]);
   const [selected, setSelected] = useState<Design | null>(null);
-  const [pendingLike, setPendingLike] = useState<{ id: string; name: string } | null>(null);
+  const [pendingLike, setPendingLike] = useState<{ id: string; name: string; color?: string } | null>(null);
   const [showDropPrompt, setShowDropPrompt] = useState(false);
   const loadCounts = useServerFn(getDesignLikeCounts);
   const heroRef = useRef<HTMLElement>(null);
@@ -45,16 +45,22 @@ export function PublicSite() {
       promptTimer = window.setTimeout(() => setShowDropPrompt(false), 6500);
     };
     window.addEventListener("open-drop-picker", openDropPicker);
+    // Warm the cache with colourway shots so the detail view swaps instantly the first time it opens.
+    const preloadTimer = window.setTimeout(() => {
+      const sources = new Set(designs.flatMap((d) => d.colors.flatMap((c) => [c.image, c.modelImage ?? ""])));
+      sources.forEach((src) => { if (src) new Image().src = src; });
+    }, 2000);
     void loadCounts().then(setLikeCounts).catch(() => {});
     try { setLiked(JSON.parse(localStorage.getItem("afrostate-likes") ?? "[]") as string[]); } catch { /* ignore */ }
     return () => {
       window.removeEventListener("open-drop-picker", openDropPicker);
+      window.clearTimeout(preloadTimer);
       if (promptTimer) window.clearTimeout(promptTimer);
     };
   }, [loadCounts]);
 
-  function openLike(design: Design) {
-    setPendingLike({ id: design.id, name: design.name });
+  function openLike(design: Design, color = "") {
+    setPendingLike({ id: design.id, name: color ? `${design.name} ${color.toUpperCase()}` : design.name, color });
     setModal(true);
   }
   function handleJoined(designId: string | null) {
@@ -154,7 +160,7 @@ export function PublicSite() {
       likes={selected ? likeCounts[selected.id] ?? 0 : 0}
       liked={selected ? liked.includes(selected.id) : false}
       onClose={() => setSelected(null)}
-      onLike={(design) => { setSelected(null); openLike(design); }}
+      onLike={(design, color) => { setSelected(null); openLike(design, color); }}
     />
     <WaitlistModal open={modal} onOpenChange={(next) => { setModal(next); if (!next) window.setTimeout(() => setPendingLike(null), 250); }} likedDesign={pendingLike} onJoined={handleJoined}/>
   </div>;

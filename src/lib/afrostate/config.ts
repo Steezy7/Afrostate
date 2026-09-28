@@ -2,6 +2,25 @@ import brandLogo from "/src/assets/afrostate-brand-optimized.jpg";
 import heroImage from "@/assets/afrostate-hero-optimized.jpg";
 import duoImage from "@/assets/afrostate-duo-optimized.jpg";
 import detailImage from "@/assets/afrostate-detail-optimized.jpg";
+import drop001Hero from "@/assets/drop001/hero-white.jpg";
+import shirtWhite from "@/assets/drop001/shirt-white.jpg";
+import shirtBlack from "@/assets/drop001/shirt-black.jpg";
+import shirtRed from "@/assets/drop001/shirt-red.jpg";
+import shirtRoyalBlue from "@/assets/drop001/shirt-royal-blue.jpg";
+import shirtGreen from "@/assets/drop001/shirt-green.jpg";
+import shirtCream from "@/assets/drop001/shirt-cream.jpg";
+import shirtNavy from "@/assets/drop001/shirt-navy.jpg";
+import shirtBrown from "@/assets/drop001/shirt-brown.jpg";
+import shirtGrey from "@/assets/drop001/shirt-grey.jpg";
+import modelWhite from "@/assets/drop001/model-white.jpg";
+import modelBlack from "@/assets/drop001/model-black.jpg";
+import modelRed from "@/assets/drop001/model-red.jpg";
+import modelRoyalBlue from "@/assets/drop001/model-royal-blue.jpg";
+import modelGreen from "@/assets/drop001/model-green.jpg";
+import modelCream from "@/assets/drop001/model-cream.jpg";
+import modelNavy from "@/assets/drop001/model-navy.jpg";
+import modelBrown from "@/assets/drop001/model-brown.jpg";
+import modelGrey from "@/assets/drop001/model-grey.jpg";
 
 export const brand = {
   name: "AFROSTATE",
@@ -33,6 +52,8 @@ export type Design = {
   image: string;
   category: string;
   alt: string;
+  /** Product copy shown in the detail view. Falls back to `alt`. */
+  description?: string;
   colors: DesignColor[];
 };
 
@@ -46,8 +67,21 @@ const placeholderColors: DesignColor[] = [
   { name: "Sand", swatch: "#d9bb8b", image: heroImage },
 ];
 
+// Drop 001 jersey: the model shots are all the same pose, so swapping them reads as only the shirt changing.
+const drop001Colors: DesignColor[] = [
+  { name: "White", swatch: "#f4f4f2", image: shirtWhite, modelImage: modelWhite },
+  { name: "Black", swatch: "#111111", image: shirtBlack, modelImage: modelBlack },
+  { name: "Red", swatch: "#d8121b", image: shirtRed, modelImage: modelRed },
+  { name: "Royal Blue", swatch: "#1f3fd1", image: shirtRoyalBlue, modelImage: modelRoyalBlue },
+  { name: "Green", swatch: "#1d4a2a", image: shirtGreen, modelImage: modelGreen },
+  { name: "Cream", swatch: "#ece3cc", image: shirtCream, modelImage: modelCream },
+  { name: "Navy", swatch: "#17214f", image: shirtNavy, modelImage: modelNavy },
+  { name: "Brown", swatch: "#4e2e1c", image: shirtBrown, modelImage: modelBrown },
+  { name: "Grey", swatch: "#c9c9c9", image: shirtGrey, modelImage: modelGrey },
+];
+
 export const designs = [
-  { id: "001", name: "AFROSTATE 001", image: heroImage, category: "DROP 001", alt: "Model wearing a navy and cream oversized AFROSTATE-inspired streetwear look", colors: placeholderColors },
+  { id: "001", name: "AFROSTATE 001", image: drop001Hero, category: "DROP 001", alt: "Model in the white AFROSTATE jersey crop top with leopard and Union Jack badges", description: "Women's chic crop tee. Old-school football jersey energy, cut close and cropped. Open V-neck polo collar with striped tipping, striped sleeve cuffs, our leopard crest and leopard-print Union Jack badge, and AFROSTATE in hand-style script across the chest. Terrace-ready, street-made, nine colourways.", colors: drop001Colors },
   { id: "002", name: "AFROSTATE 002", image: detailImage, category: "DROP 001", alt: "Model in a navy streetwear set with cream piping and leopard-print accents", colors: placeholderColors },
   { id: "003", name: "AFROSTATE 003", image: duoImage, category: "DROP 001", alt: "Two models in coordinated cream, black, and navy streetwear looks", colors: placeholderColors },
   { id: "004", name: "AFROSTATE 004", image: detailImage, category: "DROP 001", alt: "Editorial detail of navy streetwear with cream piping and leopard-print accents", colors: placeholderColors },

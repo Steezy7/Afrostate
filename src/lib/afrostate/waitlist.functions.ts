@@ -9,6 +9,7 @@ const waitlistSchema = z.object({
   phoneNumber: z.string().trim().max(20),
   email: z.string().trim().email("Enter a valid email").max(255).optional().or(z.literal("")),
   likedDesignId: z.string().trim().max(32).optional().or(z.literal("")),
+  likedColor: z.string().trim().max(40).regex(/^[A-Za-z -]*$/).optional().or(z.literal("")),
 });
 
 const adminCodeSchema = z.object({ code: z.string().min(1).max(200) });
@@ -62,21 +63,27 @@ function requireAdmin(token?: string) {
 
 async function loadAdminState() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const [{ data: rows, error }, { data: likes, error: likesError }] = await Promise.all([
+  const [{ data: rows, error }, withColor] = await Promise.all([
     supabaseAdmin
       .from("waiting_list")
       .select("id, full_name, phone_number, email, created_at")
       .order("created_at", { ascending: false }),
-    supabaseAdmin.from("design_likes").select("design_id, waiting_list_id"),
+    supabaseAdmin.from("design_likes").select("design_id, waiting_list_id, color"),
   ]);
   if (error) throw new Error(`Waitlist query failed: ${error.message}`);
+  // Fallback for databases that don't have migration 003 (colour column) yet.
+  const { data: likes, error: likesError } = withColor.error
+    ? await supabaseAdmin.from("design_likes").select("design_id, waiting_list_id")
+    : withColor;
   if (likesError) throw new Error(`Likes query failed: ${likesError.message}`);
 
+  // Labels like "001 RED"; likes saved before colours existed are just "001".
   const byPerson = new Map<string, string[]>();
   const byDesign = new Map<string, number>();
-  for (const like of likes ?? []) {
-    byPerson.set(like.waiting_list_id, [...(byPerson.get(like.waiting_list_id) ?? []), like.design_id]);
-    byDesign.set(like.design_id, (byDesign.get(like.design_id) ?? 0) + 1);
+  for (const like of (likes ?? []) as { design_id: string; waiting_list_id: string; color?: string }[]) {
+    const label = like.color ? `${like.design_id} ${like.color.toUpperCase()}` : like.design_id;
+    byPerson.set(like.waiting_list_id, [...(byPerson.get(like.waiting_list_id) ?? []), label]);
+    byDesign.set(label, (byDesign.get(label) ?? 0) + 1);
   }
   const records = (rows ?? []).map((row) => ({ ...row, likes: (byPerson.get(row.id) ?? []).sort() }));
   const likeTotals = [...byDesign.entries()]
@@ -109,9 +116,14 @@ export const joinWaitlist = createServerFn({ method: "POST" })
       personId = existing?.id ?? null;
     }
     if (personId && data.likedDesignId) {
-      await supabaseAdmin
+      const like = { design_id: data.likedDesignId, waiting_list_id: personId };
+      const { error: likeError } = await supabaseAdmin
         .from("design_likes")
-        .upsert({ design_id: data.likedDesignId, waiting_list_id: personId }, { onConflict: "design_id,waiting_list_id" });
+        .upsert({ ...like, color: data.likedColor ?? "" }, { onConflict: "design_id,waiting_list_id,color" });
+      // Fallback for databases that don't have migration 003 (colour column) yet.
+      if (likeError) {
+        await supabaseAdmin.from("design_likes").upsert(like, { onConflict: "design_id,waiting_list_id" });
+      }
     }
     return { status: duplicate ? ("duplicate" as const) : ("success" as const) };
   });
