@@ -54,6 +54,8 @@ export type Design = {
   alt: string;
   /** Product copy shown in the detail view. Falls back to `alt`. */
   description?: string;
+  /** Short catchy line shown on a yellow banner under the description. */
+  tagline?: string;
   colors: DesignColor[];
 };
 
@@ -81,7 +83,7 @@ const drop001Colors: DesignColor[] = [
 ];
 
 export const designs = [
-  { id: "001", name: "AFROSTATE 001", image: drop001Hero, category: "DROP 001", alt: "Model in the white AFROSTATE jersey crop top with leopard and Union Jack badges", description: "Women's chic crop tee. Old-school football jersey energy, cut close and cropped. Open V-neck polo collar with striped tipping, striped sleeve cuffs, our leopard crest and leopard-print Union Jack badge, and AFROSTATE in hand-style script across the chest. Terrace-ready, street-made, nine colourways.", colors: drop001Colors },
+  { id: "001", name: "AFROSTATE 001", image: drop001Hero, category: "DROP 001", alt: "Model in the white AFROSTATE jersey crop top with leopard and Union Jack badges", description: "AFROSTATE women's cropped V-collar tee.", tagline: "Women's state of mind.", colors: drop001Colors },
   { id: "002", name: "AFROSTATE 002", image: detailImage, category: "DROP 001", alt: "Model in a navy streetwear set with cream piping and leopard-print accents", colors: placeholderColors },
   { id: "003", name: "AFROSTATE 003", image: duoImage, category: "DROP 001", alt: "Two models in coordinated cream, black, and navy streetwear looks", colors: placeholderColors },
   { id: "004", name: "AFROSTATE 004", image: detailImage, category: "DROP 001", alt: "Editorial detail of navy streetwear with cream piping and leopard-print accents", colors: placeholderColors },
