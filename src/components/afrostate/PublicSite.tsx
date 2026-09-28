@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowDownRight, ArrowRight, Asterisk, Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { brand, designs, navigation, socials, type Design } from "@/lib/afrostate/config";
+import { brand, designs, heroDesign, navigation, socials, type Design } from "@/lib/afrostate/config";
 import { getDesignLikeCounts } from "@/lib/afrostate/waitlist.functions";
 import { DesignDetail } from "./DesignDetail";
 import { WaitlistModal } from "./WaitlistModal";
@@ -100,8 +100,8 @@ export function PublicSite() {
           <JoinButton className="mt-7 w-fit" />
         </div>
         <div className="hero-photo relative min-h-[48vh] overflow-hidden border-4 border-foreground bg-muted shadow-[9px_9px_0_var(--foreground)] md:min-h-0">
-          <img src={designs[0].image} alt={designs[0].alt} width={720} height={900} fetchPriority="high" className="h-full w-full object-cover object-center" />
-          <span className="absolute bottom-4 right-4 rotate-[-5deg] border-2 border-foreground bg-primary px-4 py-2 font-display text-2xl">001</span>
+          <img src={heroDesign.image} alt={heroDesign.alt} width={720} height={900} fetchPriority="high" className="h-full w-full object-cover object-center" />
+          <span className="absolute bottom-4 right-4 rotate-[-5deg] border-2 border-foreground bg-primary px-4 py-2 font-display text-2xl">{heroDesign.id}</span>
         </div>
         <img src={brand.logo} alt="" aria-hidden width={640} height={520} className="hero-logo pointer-events-none absolute bottom-1 left-[38%] z-20 hidden w-64 rotate-[-8deg] border-4 border-foreground md:block" />
         <div className="absolute right-4 top-4 z-20 font-mono text-xs font-bold [writing-mode:vertical-rl]">NO FIXED ADDRESS / 2026</div>

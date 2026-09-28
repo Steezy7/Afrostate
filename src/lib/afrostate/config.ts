@@ -22,6 +22,8 @@ import modelNavy from "@/assets/drop001/model-navy.jpg";
 import modelBrown from "@/assets/drop001/model-brown.jpg";
 import modelGrey from "@/assets/drop001/model-grey.jpg";
 import drop002Hero from "@/assets/drop002/hero-black.jpg";
+import drop003Model from "@/assets/drop003/model-black.jpg";
+import drop003FrontBack from "@/assets/drop003/front-back.jpg";
 import shortsBlack from "@/assets/drop002/shorts-black.jpg";
 import jortsModelBlack from "@/assets/drop002/model-black.jpg";
 import shortsWhite from "@/assets/drop002/shorts-white.jpg";
@@ -77,6 +79,8 @@ export type Design = {
   tagline?: string;
   /** CSS object-position for the card photo and phone crops — point it at the product (e.g. "center 70%" for shorts). */
   focus?: string;
+  /** Single-colour pieces: front/back product shot shown instead of the colour wheel. */
+  productShot?: string;
   colors: DesignColor[];
 };
 
@@ -119,7 +123,7 @@ const drop001Colors: DesignColor[] = [
 export const designs = [
   { id: "001", name: "AFROSTATE 001", image: drop001Hero, category: "DROP 001", alt: "Model in the white AFROSTATE jersey crop top with leopard and Union Jack badges", description: "AFROSTATE women's cropped V-collar tee.", tagline: "Women's state of mind.", colors: drop001Colors },
   { id: "002", name: "AFROSTATE 002", image: drop002Hero, category: "DROP 002", alt: "Model in black AFROSTATE street jorts with a leopard-print waistband, styled with the black jersey crop tee", description: "AFROSTATE leopard-waist street jorts. Long-line, loose through the leg, finished with the running-man logo.", tagline: "Built for the block.", focus: "center 72%", colors: drop002Colors },
-  { id: "003", name: "AFROSTATE 003", image: duoImage, category: "DROP 001", alt: "Two models in coordinated cream, black, and navy streetwear looks", colors: placeholderColors },
+  { id: "003", name: "AFROSTATE 003", image: drop003Model, category: "DROP 003", alt: "Model in the black AFROSTATE leopard-panel jersey polo", description: "AFROSTATE leopard-panel jersey polo. Three-button placket, piped side panels, No. 16 across the back. Black only.", tagline: "Hush. The State is here.", productShot: drop003FrontBack, colors: [] },
   { id: "004", name: "AFROSTATE 004", image: detailImage, category: "DROP 001", alt: "Editorial detail of navy streetwear with cream piping and leopard-print accents", colors: placeholderColors },
   { id: "005", name: "AFROSTATE 005", image: duoImage, category: "DROP 001", alt: "Wide campaign crop of two models in coordinated AFROSTATE-inspired looks", colors: placeholderColors },
   { id: "006", name: "AFROSTATE 006", image: heroImage, category: "DROP 001", alt: "Close campaign crop of an oversized navy and cream streetwear look", colors: placeholderColors },
@@ -128,6 +132,9 @@ export const designs = [
   { id: "009", name: "AFROSTATE 009", image: heroImage, category: "DROP 001", alt: "Full-length editorial view of a navy and cream streetwear silhouette", colors: placeholderColors },
   { id: "010", name: "AFROSTATE 010", image: duoImage, category: "DROP 001", alt: "Cinematic campaign view of two coordinated streetwear looks", colors: placeholderColors },
 ] as const satisfies readonly Design[];
+
+// The drop featured in the home page hero photo (by id, so likes keep their numbering).
+export const heroDesign = designs.find((d) => d.id === "003") ?? designs[0];
 
 export const socials = [
   { label: "INSTAGRAM", href: "" },

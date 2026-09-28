@@ -43,7 +43,7 @@ function DetailBody({ design, likes, liked, onLike }: { design: Design; likes: n
           {design.tagline && <p className="mt-3 inline-block rotate-[-1.5deg] border-2 border-foreground bg-primary px-3 py-1 font-display text-xl uppercase leading-none shadow-[3px_3px_0_var(--foreground)] md:mt-4 md:text-3xl">{design.tagline}</p>}
         </div>
 
-        {design.colors.length > 0 && <>
+        {design.colors.length > 0 ? <>
           <div className="flex items-center justify-between border-t-2 border-foreground px-5 py-2 font-mono text-xs font-black md:px-8">
             <span>COLOURS — SCROLL</span>
             <span>{pad(index + 1)} / {pad(design.colors.length)}</span>
@@ -51,7 +51,15 @@ function DetailBody({ design, likes, liked, onLike }: { design: Design; likes: n
           <div className="min-h-[96px] flex-1">
             <ColorWheel colors={design.colors} value={index} onChange={setIndex} label={`${design.name} colours`} />
           </div>
-        </>}
+        </> : design.productShot ? <>
+          <div className="flex items-center justify-between border-t-2 border-foreground px-5 py-2 font-mono text-xs font-black md:px-8">
+            <span>FRONT / BACK</span>
+            <span>ONE COLOURWAY</span>
+          </div>
+          <div className="flex min-h-[96px] flex-1 items-center justify-center bg-white p-3 md:p-6">
+            <img src={design.productShot} alt={`${design.name} front and back`} className="h-full max-h-full w-full object-contain" />
+          </div>
+        </> : <div className="flex-1" />}
 
         <div className="border-t-4 border-foreground p-3 md:p-6">
           <p className="mb-2 font-mono text-xs font-black md:mb-3">{likes} {likes === 1 ? "LIKE" : "LIKES"}</p>
