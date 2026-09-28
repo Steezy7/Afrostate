@@ -135,7 +135,7 @@ export const dropTotal = String(designs.length).padStart(3, "0");
 export const heroDesign = designs.find((d) => d.id === "003") ?? designs[0];
 
 export const socials = [
-  { label: "INSTAGRAM", href: "" },
+  { label: "INSTAGRAM", href: "https://www.instagram.com/afrostateclothingbrand" },
   { label: "TIKTOK", href: "https://www.tiktok.com/@beama044?_r=1&_t=ZS-9A13bGHdPL0" },
   { label: "WHATSAPP", href: "https://wa.me/2347013422690" },
 ];
