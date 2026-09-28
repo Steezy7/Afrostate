@@ -2,12 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowDownRight, ArrowRight, Asterisk, Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { brand, designs, navigation, socials } from "@/lib/afrostate/config";
+import { brand, designs, navigation, socials, type Design } from "@/lib/afrostate/config";
 import { getDesignLikeCounts } from "@/lib/afrostate/waitlist.functions";
+import { DesignDetail } from "./DesignDetail";
 import { WaitlistModal } from "./WaitlistModal";
-
-type Design = (typeof designs)[number];
 
 function JoinButton({ className = "", dark = false }: { className?: string; dark?: boolean }) {
   return <Button variant={dark ? "streetDark" : "street"} size="lg" className={`group ${className}`} onClick={() => window.dispatchEvent(new Event("open-drop-picker"))}>JOIN THE WAITLIST <ArrowRight className="transition-transform group-hover:translate-x-1" /></Button>;
@@ -123,7 +121,7 @@ export function PublicSite() {
               <span className="design-number absolute left-3 top-3 z-20 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / 010</span>
               <div className="absolute inset-x-0 bottom-0 z-20 flex translate-y-1 flex-wrap items-center justify-between gap-3 bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div>
                 <div className="flex items-center gap-2">
-                  <Button variant="streetDark" size="sm" className="h-10" onClick={() => openLike(design)} aria-label={`Like ${design.name}`}><Heart className={liked.includes(design.id) ? "fill-current" : ""} /> {liked.includes(design.id) ? "LIKED" : "LIKE"} {likeCounts[design.id] ?? 0}</Button>
+                  <Button variant="streetDark" size="sm" className="h-10" onClick={() => setSelected(design)} aria-label={`Like ${design.name}`}><Heart className={liked.includes(design.id) ? "fill-current" : ""} /> {liked.includes(design.id) ? "LIKED" : "LIKE"} {likeCounts[design.id] ?? 0}</Button>
                   <ArrowRight className="size-7"/>
                 </div>
               </div>
@@ -151,21 +149,14 @@ export function PublicSite() {
     </main>
 
     <footer className="bg-secondary px-5 py-16 md:px-10"><div className="mx-auto max-w-[1500px]"><img src={brand.logo} alt="AFROSTATE" width={640} height={520} className="w-48 border-2 border-foreground md:w-64"/><div className="my-14 flex flex-col items-start justify-between gap-8 border-y-4 border-foreground py-10 md:flex-row md:items-end"><h2 className="font-display text-[clamp(4rem,11vw,10rem)] uppercase leading-[0.78]">See you in<br/>the state.</h2><JoinButton className="shrink-0"/></div><div className="flex flex-col justify-between gap-8 font-black md:flex-row md:items-end"><div className="flex gap-6">{socials.map((social) => social.href ? <a key={social.label} href={social.href} target="_blank" rel="noreferrer" className="border-b-2 border-foreground transition-colors hover:text-background hover:border-background">{social.label}</a> : <span key={social.label} className="cursor-default border-b-2 border-foreground">{social.label}</span>)}</div><p>© 2026 AFROSTATE</p></div></div></footer>
-    <Dialog open={Boolean(selected)} onOpenChange={(next) => !next && setSelected(null)}>
-      <DialogContent className="max-h-[92vh] overflow-y-auto rounded-none border-4 border-foreground bg-background p-0 shadow-[10px_10px_0_var(--foreground)] sm:max-w-3xl">
-        {selected && <div className="grid md:grid-cols-2">
-          <img src={selected.image} alt={selected.alt} className="h-full max-h-[60vh] w-full border-b-4 border-foreground object-cover md:max-h-none md:border-b-0 md:border-r-4" />
-          <div className="p-7 md:p-10">
-            <span className="inline-block rotate-[-2deg] border-2 border-foreground bg-primary px-3 py-1 text-xs font-black uppercase">{selected.category}</span>
-            <DialogTitle className="mt-6 font-display text-5xl uppercase leading-[0.85]">{selected.name}</DialogTitle>
-            <DialogDescription className="mt-4 text-base font-bold text-foreground/75">{selected.alt}</DialogDescription>
-            <p className="mt-6 font-display text-6xl">{likeCounts[selected.id] ?? 0}<span className="ml-3 font-sans text-sm font-black uppercase">likes</span></p>
-            <Button variant="street" size="lg" className="mt-7 w-full" onClick={() => { const design = selected; setSelected(null); openLike(design); }}><Heart className={liked.includes(selected.id) ? "fill-current" : ""} /> {liked.includes(selected.id) ? "LIKED — LIKE AGAIN" : "LIKE THIS DROP"}</Button>
-            <Button variant="streetDark" size="lg" className="mt-3 w-full" onClick={() => window.dispatchEvent(new Event("open-drop-picker"))}>JOIN THE WAITLIST <ArrowRight /></Button>
-          </div>
-        </div>}
-      </DialogContent>
-    </Dialog>
+    <DesignDetail
+      design={selected}
+      likes={selected ? likeCounts[selected.id] ?? 0 : 0}
+      liked={selected ? liked.includes(selected.id) : false}
+      onClose={() => setSelected(null)}
+      onLike={(design) => { setSelected(null); openLike(design); }}
+      onJoin={() => window.dispatchEvent(new Event("open-drop-picker"))}
+    />
     <WaitlistModal open={modal} onOpenChange={(next) => { setModal(next); if (!next) window.setTimeout(() => setPendingLike(null), 250); }} likedDesign={pendingLike} onJoined={handleJoined}/>
   </div>;
 }
