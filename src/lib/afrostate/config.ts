@@ -21,6 +21,7 @@ import modelGrey from "@/assets/drop001/model-grey.jpg";
 import drop002Hero from "@/assets/drop002/hero-black.jpg";
 import drop003Model from "@/assets/drop003/model-black.jpg";
 import drop003FrontBack from "@/assets/drop003/front-back.jpg";
+import drop004Hero from "@/assets/drop004/hero-black.jpg";
 import teeRed from "@/assets/drop004/tee-red.jpg";
 import groupModelRed from "@/assets/drop004/model-red.jpg";
 import teeBlack from "@/assets/drop004/tee-black.jpg";
@@ -102,8 +103,8 @@ const drop002Colors: DesignColor[] = [
 
 // Drop 004 AFRO graphic tee: same group shot in each colour, only the tees change.
 const drop004Colors: DesignColor[] = [
-  { name: "Red", swatch: "#d8261b", image: teeRed, modelImage: groupModelRed },
   { name: "Black", swatch: "#111111", image: teeBlack, modelImage: groupModelBlack },
+  { name: "Red", swatch: "#d8261b", image: teeRed, modelImage: groupModelRed },
   { name: "White", swatch: "#f4f4f2", image: teeWhite, modelImage: groupModelWhite },
 ];
 
@@ -124,7 +125,7 @@ export const designs = [
   { id: "001", name: "AFROSTATE 001", image: drop001Hero, category: "DROP 001", alt: "Model in the white AFROSTATE jersey crop top with leopard and Union Jack badges", description: "AFROSTATE women's cropped V-collar tee.", tagline: "Women's state of mind.", colors: drop001Colors },
   { id: "002", name: "AFROSTATE 002", image: drop002Hero, category: "DROP 002", alt: "Model in black AFROSTATE street jorts with a leopard-print waistband, styled with the black jersey crop tee", description: "AFROSTATE leopard-waist street jorts. Long-line, loose through the leg, finished with the running-man logo.", tagline: "Built for the block.", focus: "center 72%", colors: drop002Colors },
   { id: "003", name: "AFROSTATE 003", image: drop003Model, category: "DROP 003", alt: "Model in the black AFROSTATE leopard-panel jersey polo", description: "AFROSTATE leopard-panel jersey polo. Three-button placket, piped side panels, No. 16 across the back. Black only.", tagline: "Hush. The State is here.", productShot: drop003FrontBack, colors: [] },
-  { id: "004", name: "AFROSTATE 004", image: groupModelRed, category: "DROP 004", alt: "Three models on a stairwell in matching red AFROSTATE AFRO graphic tees", description: "AFROSTATE AFRO graphic tee. Leopard-filled block letters, distressed print, running-man mark. Red, black or white.", tagline: "Rep the State.", focus: "center 30%", colors: drop004Colors },
+  { id: "004", name: "AFROSTATE 004", image: drop004Hero, category: "DROP 004", alt: "Three models on a stairwell in matching black AFROSTATE AFRO graphic tees", description: "AFROSTATE AFRO graphic tee. Leopard-filled block letters, distressed print, running-man mark. Red, black or white.", tagline: "Rep the State.", focus: "center 30%", colors: drop004Colors },
 ] as const satisfies readonly Design[];
 
 /** Number of drops, zero-padded ("004"), for the "001 / 004" style counters. */
