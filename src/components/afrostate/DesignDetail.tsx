@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import type { Design } from "@/lib/afrostate/config";
@@ -7,17 +7,17 @@ import { ColorWheel } from "./ColorWheel";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export function DesignDetail({ design, likes, liked, onClose, onLike, onJoin }: { design: Design | null; likes: number; liked: boolean; onClose: () => void; onLike: (design: Design) => void; onJoin: () => void }) {
+export function DesignDetail({ design, likes, liked, onClose, onLike }: { design: Design | null; likes: number; liked: boolean; onClose: () => void; onLike: (design: Design) => void }) {
   return (
     <Dialog open={Boolean(design)} onOpenChange={(next) => !next && onClose()}>
       <DialogContent className="h-[min(92svh,880px)] w-[calc(100vw-1.5rem)] max-w-6xl gap-0 overflow-hidden rounded-none border-4 border-foreground bg-background p-0 shadow-[10px_10px_0_var(--foreground)] sm:max-w-6xl sm:rounded-none">
-        {design && <DetailBody key={design.id} design={design} likes={likes} liked={liked} onLike={onLike} onJoin={onJoin} />}
+        {design && <DetailBody key={design.id} design={design} likes={likes} liked={liked} onLike={onLike} />}
       </DialogContent>
     </Dialog>
   );
 }
 
-function DetailBody({ design, likes, liked, onLike, onJoin }: { design: Design; likes: number; liked: boolean; onLike: (design: Design) => void; onJoin: () => void }) {
+function DetailBody({ design, likes, liked, onLike }: { design: Design; likes: number; liked: boolean; onLike: (design: Design) => void }) {
   const [index, setIndex] = useState(0);
   const color = design.colors[index];
   const photo = color?.modelImage ?? design.image;
@@ -49,10 +49,7 @@ function DetailBody({ design, likes, liked, onLike, onJoin }: { design: Design; 
 
         <div className="border-t-4 border-foreground p-4 md:p-6">
           <p className="mb-3 font-mono text-xs font-black">{likes} {likes === 1 ? "LIKE" : "LIKES"}</p>
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="street" size="lg" className="w-full" onClick={() => onLike(design)}><Heart className={liked ? "fill-current" : ""} /> {liked ? "LIKED" : "LIKE THIS"}</Button>
-            <Button variant="streetDark" size="lg" className="w-full" onClick={onJoin}>WAITLIST <ArrowRight /></Button>
-          </div>
+          <Button variant="street" size="lg" className="w-full" onClick={() => onLike(design)}><Heart className={liked ? "fill-current" : ""} /> LIKE TO JOIN WAITLIST</Button>
         </div>
       </div>
     </div>

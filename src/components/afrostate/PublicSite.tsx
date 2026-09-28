@@ -155,7 +155,6 @@ export function PublicSite() {
       liked={selected ? liked.includes(selected.id) : false}
       onClose={() => setSelected(null)}
       onLike={(design) => { setSelected(null); openLike(design); }}
-      onJoin={() => window.dispatchEvent(new Event("open-drop-picker"))}
     />
     <WaitlistModal open={modal} onOpenChange={(next) => { setModal(next); if (!next) window.setTimeout(() => setPendingLike(null), 250); }} likedDesign={pendingLike} onJoined={handleJoined}/>
   </div>;
