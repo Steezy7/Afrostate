@@ -24,6 +24,12 @@ import modelGrey from "@/assets/drop001/model-grey.jpg";
 import drop002Hero from "@/assets/drop002/hero-black.jpg";
 import drop003Model from "@/assets/drop003/model-black.jpg";
 import drop003FrontBack from "@/assets/drop003/front-back.jpg";
+import teeRed from "@/assets/drop004/tee-red.jpg";
+import groupModelRed from "@/assets/drop004/model-red.jpg";
+import teeBlack from "@/assets/drop004/tee-black.jpg";
+import groupModelBlack from "@/assets/drop004/model-black.jpg";
+import teeWhite from "@/assets/drop004/tee-white.jpg";
+import groupModelWhite from "@/assets/drop004/model-white.jpg";
 import shortsBlack from "@/assets/drop002/shorts-black.jpg";
 import jortsModelBlack from "@/assets/drop002/model-black.jpg";
 import shortsWhite from "@/assets/drop002/shorts-white.jpg";
@@ -108,6 +114,13 @@ const drop002Colors: DesignColor[] = [
   { name: "Grey", swatch: "#c4c4c4", image: shortsGrey, modelImage: jortsModelGrey },
 ];
 
+// Drop 004 AFRO graphic tee: same group shot in each colour, only the tees change.
+const drop004Colors: DesignColor[] = [
+  { name: "Red", swatch: "#d8261b", image: teeRed, modelImage: groupModelRed },
+  { name: "Black", swatch: "#111111", image: teeBlack, modelImage: groupModelBlack },
+  { name: "White", swatch: "#f4f4f2", image: teeWhite, modelImage: groupModelWhite },
+];
+
 const drop001Colors: DesignColor[] = [
   { name: "White", swatch: "#f4f4f2", image: shirtWhite, modelImage: modelWhite },
   { name: "Black", swatch: "#111111", image: shirtBlack, modelImage: modelBlack },
@@ -124,7 +137,7 @@ export const designs = [
   { id: "001", name: "AFROSTATE 001", image: drop001Hero, category: "DROP 001", alt: "Model in the white AFROSTATE jersey crop top with leopard and Union Jack badges", description: "AFROSTATE women's cropped V-collar tee.", tagline: "Women's state of mind.", colors: drop001Colors },
   { id: "002", name: "AFROSTATE 002", image: drop002Hero, category: "DROP 002", alt: "Model in black AFROSTATE street jorts with a leopard-print waistband, styled with the black jersey crop tee", description: "AFROSTATE leopard-waist street jorts. Long-line, loose through the leg, finished with the running-man logo.", tagline: "Built for the block.", focus: "center 72%", colors: drop002Colors },
   { id: "003", name: "AFROSTATE 003", image: drop003Model, category: "DROP 003", alt: "Model in the black AFROSTATE leopard-panel jersey polo", description: "AFROSTATE leopard-panel jersey polo. Three-button placket, piped side panels, No. 16 across the back. Black only.", tagline: "Hush. The State is here.", productShot: drop003FrontBack, colors: [] },
-  { id: "004", name: "AFROSTATE 004", image: detailImage, category: "DROP 001", alt: "Editorial detail of navy streetwear with cream piping and leopard-print accents", colors: placeholderColors },
+  { id: "004", name: "AFROSTATE 004", image: groupModelRed, category: "DROP 004", alt: "Three models on a stairwell in matching red AFROSTATE AFRO graphic tees", description: "AFROSTATE AFRO graphic tee. Leopard-filled block letters, distressed print, running-man mark. Red, black or white.", tagline: "Rep the State.", focus: "center 30%", colors: drop004Colors },
   { id: "005", name: "AFROSTATE 005", image: duoImage, category: "DROP 001", alt: "Wide campaign crop of two models in coordinated AFROSTATE-inspired looks", colors: placeholderColors },
   { id: "006", name: "AFROSTATE 006", image: heroImage, category: "DROP 001", alt: "Close campaign crop of an oversized navy and cream streetwear look", colors: placeholderColors },
   { id: "007", name: "AFROSTATE 007", image: duoImage, category: "DROP 001", alt: "Outdoor editorial view of coordinated cream, black, and navy streetwear", colors: placeholderColors },
