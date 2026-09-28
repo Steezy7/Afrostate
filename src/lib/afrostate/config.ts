@@ -1,7 +1,4 @@
 import brandLogo from "/src/assets/afrostate-brand-optimized.jpg";
-import heroImage from "@/assets/afrostate-hero-optimized.jpg";
-import duoImage from "@/assets/afrostate-duo-optimized.jpg";
-import detailImage from "@/assets/afrostate-detail-optimized.jpg";
 import drop001Hero from "@/assets/drop001/hero-white.jpg";
 import shirtWhite from "@/assets/drop001/shirt-white.jpg";
 import shirtBlack from "@/assets/drop001/shirt-black.jpg";
@@ -90,17 +87,6 @@ export type Design = {
   colors: DesignColor[];
 };
 
-// Placeholder colourways until the real product shots are in. Give each design its own list:
-// import the photo from src/assets and set `image` (and `modelImage` if you have one).
-const placeholderColors: DesignColor[] = [
-  { name: "Navy", swatch: "#1f2b5e", image: detailImage },
-  { name: "Cream", swatch: "#efe3c8", image: heroImage },
-  { name: "Black", swatch: "#161616", image: duoImage },
-  { name: "Leopard", swatch: "#b5854b", image: detailImage },
-  { name: "Sand", swatch: "#d9bb8b", image: heroImage },
-];
-
-// Drop 001 jersey: the model shots are all the same pose, so swapping them reads as only the shirt changing.
 // Drop 002 jorts: same model and pose in every shot, only the shorts change.
 const drop002Colors: DesignColor[] = [
   { name: "Black", swatch: "#111111", image: shortsBlack, modelImage: jortsModelBlack },
@@ -121,6 +107,7 @@ const drop004Colors: DesignColor[] = [
   { name: "White", swatch: "#f4f4f2", image: teeWhite, modelImage: groupModelWhite },
 ];
 
+// Drop 001 jersey: the model shots are all the same pose, so swapping them reads as only the shirt changing.
 const drop001Colors: DesignColor[] = [
   { name: "White", swatch: "#f4f4f2", image: shirtWhite, modelImage: modelWhite },
   { name: "Black", swatch: "#111111", image: shirtBlack, modelImage: modelBlack },
@@ -138,13 +125,10 @@ export const designs = [
   { id: "002", name: "AFROSTATE 002", image: drop002Hero, category: "DROP 002", alt: "Model in black AFROSTATE street jorts with a leopard-print waistband, styled with the black jersey crop tee", description: "AFROSTATE leopard-waist street jorts. Long-line, loose through the leg, finished with the running-man logo.", tagline: "Built for the block.", focus: "center 72%", colors: drop002Colors },
   { id: "003", name: "AFROSTATE 003", image: drop003Model, category: "DROP 003", alt: "Model in the black AFROSTATE leopard-panel jersey polo", description: "AFROSTATE leopard-panel jersey polo. Three-button placket, piped side panels, No. 16 across the back. Black only.", tagline: "Hush. The State is here.", productShot: drop003FrontBack, colors: [] },
   { id: "004", name: "AFROSTATE 004", image: groupModelRed, category: "DROP 004", alt: "Three models on a stairwell in matching red AFROSTATE AFRO graphic tees", description: "AFROSTATE AFRO graphic tee. Leopard-filled block letters, distressed print, running-man mark. Red, black or white.", tagline: "Rep the State.", focus: "center 30%", colors: drop004Colors },
-  { id: "005", name: "AFROSTATE 005", image: duoImage, category: "DROP 001", alt: "Wide campaign crop of two models in coordinated AFROSTATE-inspired looks", colors: placeholderColors },
-  { id: "006", name: "AFROSTATE 006", image: heroImage, category: "DROP 001", alt: "Close campaign crop of an oversized navy and cream streetwear look", colors: placeholderColors },
-  { id: "007", name: "AFROSTATE 007", image: duoImage, category: "DROP 001", alt: "Outdoor editorial view of coordinated cream, black, and navy streetwear", colors: placeholderColors },
-  { id: "008", name: "AFROSTATE 008", image: detailImage, category: "DROP 001", alt: "Cropped AFROSTATE-inspired jacket detail against a yellow backdrop", colors: placeholderColors },
-  { id: "009", name: "AFROSTATE 009", image: heroImage, category: "DROP 001", alt: "Full-length editorial view of a navy and cream streetwear silhouette", colors: placeholderColors },
-  { id: "010", name: "AFROSTATE 010", image: duoImage, category: "DROP 001", alt: "Cinematic campaign view of two coordinated streetwear looks", colors: placeholderColors },
 ] as const satisfies readonly Design[];
+
+/** Number of drops, zero-padded ("004"), for the "001 / 004" style counters. */
+export const dropTotal = String(designs.length).padStart(3, "0");
 
 // The drop featured in the home page hero photo (by id, so likes keep their numbering).
 export const heroDesign = designs.find((d) => d.id === "003") ?? designs[0];

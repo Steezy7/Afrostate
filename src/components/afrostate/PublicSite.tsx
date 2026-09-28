@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowDownRight, ArrowRight, Asterisk, Heart, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { brand, designs, heroDesign, navigation, socials, type Design } from "@/lib/afrostate/config";
+import { brand, designs, dropTotal, heroDesign, navigation, socials, type Design } from "@/lib/afrostate/config";
 import { getDesignLikeCounts } from "@/lib/afrostate/waitlist.functions";
 import { DesignDetail } from "./DesignDetail";
 import { WaitlistModal } from "./WaitlistModal";
@@ -115,7 +115,7 @@ export function PublicSite() {
       </section>
 
       <section id="drop" className="border-y-4 border-foreground bg-background px-4 py-20 text-foreground md:px-8 md:py-28">
-        <div className="mx-auto max-w-[1500px]"><div className="mb-8 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-5"><div className="min-w-0"><p className="font-mono text-sm font-bold">THE FIRST STATE / 001—010</p><h2 className="section-title font-display uppercase">Drop 001</h2></div><div className="flex shrink-0 flex-col items-end gap-3"><ArrowDownRight className="hidden size-20 text-primary md:block"/><Sticker className="hidden rotate-2 md:inline-block">10 LOOKS / ONE STATE</Sticker></div></div>
+        <div className="mx-auto max-w-[1500px]"><div className="mb-8 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-5"><div className="min-w-0"><p className="font-mono text-sm font-bold">THE FIRST STATE / 001—{dropTotal}</p><h2 className="section-title font-display uppercase">Drop 001</h2></div><div className="flex shrink-0 flex-col items-end gap-3"><ArrowDownRight className="hidden size-20 text-primary md:block"/><Sticker className="hidden rotate-2 md:inline-block">{designs.length} LOOKS / ONE STATE</Sticker></div></div>
           <div className={`drop-instruction mb-16 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4 border-4 border-foreground bg-primary p-4 shadow-[6px_6px_0_var(--foreground)] transition-transform md:mb-24 md:w-fit md:px-6 ${showDropPrompt ? "drop-instruction-active" : ""}`} role="status" aria-live="polite">
             <Heart className="size-8 shrink-0 fill-current" />
             <p className="font-display text-xl uppercase leading-tight md:text-3xl">Pick a look and tap like to join the waitlist.</p>
@@ -124,7 +124,7 @@ export function PublicSite() {
             {designs.map((design, index) => <article key={design.id} onMouseEnter={() => setDropCursor((cursor) => ({ ...cursor, visible: true }))} onMouseLeave={() => setDropCursor((cursor) => ({ ...cursor, visible: false }))} onMouseMove={(event) => setDropCursor({ x: event.clientX, y: event.clientY, visible: true })} className={`design-card design-${index + 1} group relative overflow-hidden border-4 border-foreground bg-muted shadow-[7px_7px_0_var(--foreground)]`}>
               <button type="button" onClick={() => setSelected(design)} aria-label={`View ${design.name}`} className="absolute inset-0 z-10 block h-full w-full cursor-pointer" />
               <img src={design.image} alt={design.alt} width={720} height={900} loading="lazy" style={{ objectPosition: (design as Design).focus }} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
-              <span className="design-number absolute left-3 top-3 z-20 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / 010</span>
+              <span className="design-number absolute left-3 top-3 z-20 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / {dropTotal}</span>
               <div className="absolute inset-x-0 bottom-0 z-20 flex translate-y-1 flex-wrap items-center justify-between gap-3 bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div>
                 <div className="flex items-center gap-2">
                   <Button variant="streetDark" size="sm" className="h-10" onClick={() => setSelected(design)} aria-label={`Like ${design.name}`}><Heart className={liked.includes(design.id) ? "fill-current" : ""} /> {liked.includes(design.id) ? "LIKED" : "LIKE"} {likeCounts[design.id] ?? 0}</Button>

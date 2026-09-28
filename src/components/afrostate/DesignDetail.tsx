@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import type { Design } from "@/lib/afrostate/config";
+import { dropTotal, type Design } from "@/lib/afrostate/config";
 import { ColorWheel } from "./ColorWheel";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -31,7 +31,7 @@ function DetailBody({ design, likes, liked, onLike }: { design: Design; likes: n
         {photos.map((src) => (
           <img key={src} src={src} alt={src === photo ? `${design.alt}${color ? ` — ${color.name}` : ""}` : ""} aria-hidden={src !== photo} decoding="async" style={{ "--focus": design.focus ?? "center 45%" } as React.CSSProperties} className={`absolute inset-0 h-full w-full object-cover object-[var(--focus)] transition-opacity md:object-top duration-150 ease-out ${src === photo ? "opacity-100" : "opacity-0"}`} />
         ))}
-        <span className="absolute left-4 top-4 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / 010</span>
+        <span className="absolute left-4 top-4 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / {dropTotal}</span>
         {color && <span className="absolute bottom-4 left-4 flex items-center gap-2 border-2 border-foreground bg-primary px-3 py-1.5 font-display text-lg uppercase shadow-[3px_3px_0_var(--foreground)]"><span className="size-3 rounded-full border border-foreground" style={{ background: color.swatch }} />{color.name}</span>}
       </div>
 
