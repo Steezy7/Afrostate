@@ -123,7 +123,7 @@ export function PublicSite() {
           <div className="lookbook-grid">
             {designs.map((design, index) => <article key={design.id} onMouseEnter={() => setDropCursor((cursor) => ({ ...cursor, visible: true }))} onMouseLeave={() => setDropCursor((cursor) => ({ ...cursor, visible: false }))} onMouseMove={(event) => setDropCursor({ x: event.clientX, y: event.clientY, visible: true })} className={`design-card design-${index + 1} group relative overflow-hidden border-4 border-foreground bg-muted shadow-[7px_7px_0_var(--foreground)]`}>
               <button type="button" onClick={() => setSelected(design)} aria-label={`View ${design.name}`} className="absolute inset-0 z-10 block h-full w-full cursor-pointer" />
-              <img src={design.image} alt={design.alt} width={720} height={900} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
+              <img src={design.image} alt={design.alt} width={720} height={900} loading="lazy" style={{ objectPosition: (design as Design).focus }} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035] group-hover:rotate-[0.4deg]" />
               <span className="design-number absolute left-3 top-3 z-20 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / 010</span>
               <div className="absolute inset-x-0 bottom-0 z-20 flex translate-y-1 flex-wrap items-center justify-between gap-3 bg-primary p-4 text-foreground transition-transform group-hover:translate-y-0"><div><span className="font-mono text-xs">{design.category}</span><h3 className="font-display text-2xl">{design.name}</h3></div>
                 <div className="flex items-center gap-2">
@@ -147,7 +147,7 @@ export function PublicSite() {
       <Marquee small />
 
       <section className="grid border-b-4 border-foreground md:grid-cols-2">
-        <div className="min-h-[520px] overflow-hidden border-b-4 border-foreground md:border-b-0 md:border-r-4"><img src={designs[1].image} alt={designs[1].alt} width={720} height={900} loading="lazy" className="h-full w-full object-cover" /></div>
+        <div className="min-h-[520px] overflow-hidden border-b-4 border-foreground md:border-b-0 md:border-r-4"><img src={designs[1].image} alt={designs[1].alt} style={{ objectPosition: designs[1].focus }} width={720} height={900} loading="lazy" className="h-full w-full object-cover" /></div>
         <div className="flex flex-col justify-center bg-background p-7 md:p-14 lg:p-20"><Sticker className="mb-8 w-fit rotate-3">MORE THAN A FIT</Sticker><h2 className="section-title font-display uppercase">More than<br/>clothes.</h2><p className="mt-7 max-w-lg text-xl font-bold leading-relaxed">Identity in motion. Culture without a dress code. AFROSTATE is for the loud ideas, the individual choices and the creativity that refuses to sit still.</p></div>
       </section>
 

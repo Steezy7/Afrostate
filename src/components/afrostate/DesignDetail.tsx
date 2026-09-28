@@ -29,7 +29,7 @@ function DetailBody({ design, likes, liked, onLike }: { design: Design; likes: n
     <div className="grid h-full min-h-0 grid-rows-[minmax(0,34%)_minmax(0,1fr)] md:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] md:grid-rows-1">
       <div className="relative min-h-0 overflow-hidden border-b-4 border-foreground bg-muted md:border-b-0 md:border-r-4">
         {photos.map((src) => (
-          <img key={src} src={src} alt={src === photo ? `${design.alt}${color ? ` — ${color.name}` : ""}` : ""} aria-hidden={src !== photo} decoding="async" className={`absolute inset-0 h-full w-full object-cover object-[center_45%] transition-opacity md:object-top duration-150 ease-out ${src === photo ? "opacity-100" : "opacity-0"}`} />
+          <img key={src} src={src} alt={src === photo ? `${design.alt}${color ? ` — ${color.name}` : ""}` : ""} aria-hidden={src !== photo} decoding="async" style={{ "--focus": design.focus ?? "center 45%" } as React.CSSProperties} className={`absolute inset-0 h-full w-full object-cover object-[var(--focus)] transition-opacity md:object-top duration-150 ease-out ${src === photo ? "opacity-100" : "opacity-0"}`} />
         ))}
         <span className="absolute left-4 top-4 border-2 border-foreground bg-background px-3 py-1 font-mono text-xs font-black">{design.id} / 010</span>
         {color && <span className="absolute bottom-4 left-4 flex items-center gap-2 border-2 border-foreground bg-primary px-3 py-1.5 font-display text-lg uppercase shadow-[3px_3px_0_var(--foreground)]"><span className="size-3 rounded-full border border-foreground" style={{ background: color.swatch }} />{color.name}</span>}

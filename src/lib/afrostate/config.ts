@@ -21,6 +21,25 @@ import modelCream from "@/assets/drop001/model-cream.jpg";
 import modelNavy from "@/assets/drop001/model-navy.jpg";
 import modelBrown from "@/assets/drop001/model-brown.jpg";
 import modelGrey from "@/assets/drop001/model-grey.jpg";
+import drop002Hero from "@/assets/drop002/hero-black.jpg";
+import shortsBlack from "@/assets/drop002/shorts-black.jpg";
+import jortsModelBlack from "@/assets/drop002/model-black.jpg";
+import shortsWhite from "@/assets/drop002/shorts-white.jpg";
+import jortsModelWhite from "@/assets/drop002/model-white.jpg";
+import shortsRed from "@/assets/drop002/shorts-red.jpg";
+import jortsModelRed from "@/assets/drop002/model-red.jpg";
+import shortsRoyalBlue from "@/assets/drop002/shorts-royal-blue.jpg";
+import jortsModelRoyalBlue from "@/assets/drop002/model-royal-blue.jpg";
+import shortsGreen from "@/assets/drop002/shorts-green.jpg";
+import jortsModelGreen from "@/assets/drop002/model-green.jpg";
+import shortsStone from "@/assets/drop002/shorts-stone.jpg";
+import jortsModelStone from "@/assets/drop002/model-stone.jpg";
+import shortsNavy from "@/assets/drop002/shorts-navy.jpg";
+import jortsModelNavy from "@/assets/drop002/model-navy.jpg";
+import shortsBrown from "@/assets/drop002/shorts-brown.jpg";
+import jortsModelBrown from "@/assets/drop002/model-brown.jpg";
+import shortsGrey from "@/assets/drop002/shorts-grey.jpg";
+import jortsModelGrey from "@/assets/drop002/model-grey.jpg";
 
 export const brand = {
   name: "AFROSTATE",
@@ -56,6 +75,8 @@ export type Design = {
   description?: string;
   /** Short catchy line shown on a yellow banner under the description. */
   tagline?: string;
+  /** CSS object-position for the card photo and phone crops — point it at the product (e.g. "center 70%" for shorts). */
+  focus?: string;
   colors: DesignColor[];
 };
 
@@ -70,6 +91,19 @@ const placeholderColors: DesignColor[] = [
 ];
 
 // Drop 001 jersey: the model shots are all the same pose, so swapping them reads as only the shirt changing.
+// Drop 002 jorts: same model and pose in every shot, only the shorts change.
+const drop002Colors: DesignColor[] = [
+  { name: "Black", swatch: "#111111", image: shortsBlack, modelImage: jortsModelBlack },
+  { name: "White", swatch: "#f4f4f2", image: shortsWhite, modelImage: jortsModelWhite },
+  { name: "Red", swatch: "#d01419", image: shortsRed, modelImage: jortsModelRed },
+  { name: "Royal Blue", swatch: "#1f3fd1", image: shortsRoyalBlue, modelImage: jortsModelRoyalBlue },
+  { name: "Green", swatch: "#1d4a2a", image: shortsGreen, modelImage: jortsModelGreen },
+  { name: "Stone", swatch: "#dcd2bd", image: shortsStone, modelImage: jortsModelStone },
+  { name: "Navy", swatch: "#17214f", image: shortsNavy, modelImage: jortsModelNavy },
+  { name: "Brown", swatch: "#4e2e1c", image: shortsBrown, modelImage: jortsModelBrown },
+  { name: "Grey", swatch: "#c4c4c4", image: shortsGrey, modelImage: jortsModelGrey },
+];
+
 const drop001Colors: DesignColor[] = [
   { name: "White", swatch: "#f4f4f2", image: shirtWhite, modelImage: modelWhite },
   { name: "Black", swatch: "#111111", image: shirtBlack, modelImage: modelBlack },
@@ -84,7 +118,7 @@ const drop001Colors: DesignColor[] = [
 
 export const designs = [
   { id: "001", name: "AFROSTATE 001", image: drop001Hero, category: "DROP 001", alt: "Model in the white AFROSTATE jersey crop top with leopard and Union Jack badges", description: "AFROSTATE women's cropped V-collar tee.", tagline: "Women's state of mind.", colors: drop001Colors },
-  { id: "002", name: "AFROSTATE 002", image: detailImage, category: "DROP 001", alt: "Model in a navy streetwear set with cream piping and leopard-print accents", colors: placeholderColors },
+  { id: "002", name: "AFROSTATE 002", image: drop002Hero, category: "DROP 002", alt: "Model in black AFROSTATE street jorts with a leopard-print waistband, styled with the black jersey crop tee", description: "AFROSTATE leopard-waist street jorts. Long-line, loose through the leg, finished with the running-man logo.", tagline: "Built for the block.", focus: "center 72%", colors: drop002Colors },
   { id: "003", name: "AFROSTATE 003", image: duoImage, category: "DROP 001", alt: "Two models in coordinated cream, black, and navy streetwear looks", colors: placeholderColors },
   { id: "004", name: "AFROSTATE 004", image: detailImage, category: "DROP 001", alt: "Editorial detail of navy streetwear with cream piping and leopard-print accents", colors: placeholderColors },
   { id: "005", name: "AFROSTATE 005", image: duoImage, category: "DROP 001", alt: "Wide campaign crop of two models in coordinated AFROSTATE-inspired looks", colors: placeholderColors },
